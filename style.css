@@ -1,0 +1,52 @@
+:root{color-scheme:light;--paper:#f4f1e9;--ink:#262620;--rule:#c9c7bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 Inter,"Segoe UI",Arial,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+.page{max-width:1520px;margin:0 auto;padding:0 clamp(20px,5vw,78px)}
+header{height:76px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between}
+header a{text-decoration:none}
+.brand{font-size:21px;font-weight:670;display:flex;align-items:center;gap:9px;letter-spacing:-1.1px}
+.brand i{display:inline-block;width:17px;height:17px;border-radius:100% 0 100% 100%;background:#5f6237;transform:rotate(-10deg)}
+.source{font-size:14px;font-weight:580}
+.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:3vw;padding:clamp(32px,4.7vw,72px) 0 31px}
+h1,h2,p{margin:0}
+h1{font:normal clamp(58px,7.6vw,112px)/.97 "Instrument Serif",Georgia,serif;letter-spacing:-.075em}
+h1 em{font-weight:400}
+.intro p{font-size:clamp(14px,1.15vw,18px);line-height:1.45}
+.grid{display:grid;grid-template-columns:1.17fr .93fr 1fr;gap:clamp(10px,1.1vw,18px)}
+.card{display:block;position:relative;overflow:hidden;isolation:isolate;height:clamp(350px,35vw,500px);padding:0;border:0;border-radius:6px;text-decoration:none;text-align:left}
+.card img,.shade{position:absolute;inset:0;width:100%;height:100%}
+.card img{object-fit:cover;z-index:-3;transition:transform .4s}
+.card:hover img{transform:scale(1.035)}
+.film{background:#32261f;color:#fff}.film img{object-position:43% 50%;filter:brightness(1.2)}
+.gorge{background:#455632;color:#fff}.gorge img{object-position:52% 50%}
+.shade{z-index:-2;background:linear-gradient(180deg,rgba(10,12,7,.2),transparent 30%,rgba(13,14,9,.13) 47%,rgba(11,12,8,.88))}
+.dub{background:#dbdf9f;color:#303221}
+.tag,.card-info,.action{position:absolute;left:clamp(16px,1.65vw,27px)}
+.tag{top:19px;font-size:12px;font-weight:600;border-radius:20px;padding:4px 10px;background:rgba(26,28,22,.77);color:white}
+.dub .tag{background:#c7cc8d;color:#303221}
+.card-info{bottom:72px;right:11px;display:grid;gap:2px}
+.title{font:normal clamp(34px,3.5vw,54px)/1.05 "Instrument Serif",Georgia,serif;letter-spacing:-.055em}
+.subtitle{font-size:14px}
+.action{bottom:23px;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:30px;border:1px solid rgba(255,255,255,.7);font-size:12px;font-weight:590}
+.action b{font-size:10px}.time{opacity:.86;font-variant-numeric:tabular-nums}
+.dub .action{border-color:#707448}
+.glyphs{position:absolute;inset:16% 0 auto;height:45%;line-height:1;display:flex;justify-content:center;align-items:center;pointer-events:none}
+.glyphs i:first-child{font:italic clamp(95px,11vw,165px)/1 Georgia,serif;color:#535b38;transform:translate(9%,4%) rotate(-8deg)}
+.glyphs i:last-child{font:normal clamp(88px,9vw,145px)/1 "Yu Mincho","Noto Serif JP",serif;color:#717b4c;transform:translate(-5%,-7%) rotate(8deg)}
+footer{display:flex;justify-content:space-between;align-items:start;gap:14px;border-top:1px solid var(--rule);margin:25px 0 30px;padding-top:16px;font-size:13px;color:#54554c}
+footer details{max-width:60ch}summary{cursor:pointer;text-align:right}details p{margin-top:10px}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #8771c9;outline-offset:3px}
+dialog{padding:0;width:min(660px,calc(100% - 24px));max-height:calc(100dvh - 24px);border:0;border-radius:9px;background:var(--paper);color:var(--ink);overflow:auto}
+dialog::backdrop{background:rgba(21,24,17,.84)}
+.viewer-top,.viewer-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px}
+h2{font:normal 27px Georgia,serif;letter-spacing:-1px}
+.viewer-top button,.languages button{background:none;border:1px solid var(--rule);padding:5px 9px;border-radius:5px;font-size:14px}
+.screen{background:#111;display:grid;place-items:center}
+video{display:block;width:100%;height:min(55dvh,620px);object-fit:contain}
+.viewer-foot{font-size:14px}.languages{display:flex;flex:none;gap:3px}.languages[hidden]{display:none}
+.languages [aria-pressed=true]{background:var(--ink);color:#fff}
+@media(max-width:760px){.intro{align-items:start;flex-direction:column;gap:15px}.intro p br{display:none}.intro p br:after{content:" "}.grid{grid-template-columns:1fr 1fr}.film{grid-row:span 2;height:100%}.dub,.gorge{height:230px}.glyphs{inset:2% 0 auto;justify-content:end;opacity:.76}.glyphs i:first-child,.glyphs i:last-child{font-size:78px}.card-info{bottom:56px}.action{bottom:15px}.subtitle{font-size:13px}}
+@media(max-width:520px){header{height:60px}.intro{padding:30px 0 22px}.grid{grid-template-columns:1fr}.card,.film{height:310px;grid-row:auto}.film img{object-position:46% 36%}.dub,.gorge{height:230px}.tag{top:14px}.glyphs{inset:0 3% auto auto;opacity:1}.glyphs i:first-child,.glyphs i:last-child{font-size:100px}footer{flex-wrap:wrap}footer details{margin-left:auto}.viewer-foot{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.card img{transition:none}}
