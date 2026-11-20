@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {buildPagoda} from './pagoda.js';
 
 const box = new T.BoxGeometry();
 const round = new T.CylinderGeometry(.5,.5,1,14);
@@ -162,38 +163,8 @@ export function buildArchitecture(builder,layout,ground,scene,surfaces) {
     if(excluded.has(id))continue;
     let y=ground(x,z);
     if(kind==='pagoda') {
-      y=Math.max(y,10);
-      const b=location(x,y,z,ang);
-      // Set the tower into a terraced hilltop; the downhill approach reaches
-      // the same raised landing as the masonry beneath its timber frame.
-      beam('stone',0,-2.15,0,14.3,4.4,13.6,b);
-      beam('stone',0,.085,0,14.7,.19,14.0,b);
-      for(let s=0;s<9;s++)beam('stone',1.2,-.12-s*.21,-7.13-s*.39,3.05,.43,.48,b);
-      beam('stone',0,-.65,0,8.5,2.65,8.5,b);
-      beam('stone',0,.40,0,8.2,.80,8.2,b);
-      for(let i=0;i<5;i++){
-        const span=10.6-i*1.02, core=span*.48,level=.8+3.85*i;
-        beam('lacquer',0,level+1.30,0,core,2.65,core,b);
-        for(const faceAngle of [0,Math.PI/2]){
-          const sideBase=b.clone().multiply(location(0,0,0,faceAngle));
-          for(const s of [-1,1]){
-            for(let j=-1;j<=1;j++){
-              const px=j*core*.285;
-              beam(i===0?'edge':'darkRed',px,level+1.34,s*core*.505,core*.2,1.45,.12,sideBase);
-              for(const off of [-.19,.19])beam('lightRed',px+off,level+1.39,s*core*.53,.055,1.30,.08,sideBase);
-            }
-            beam('lightRed',0,level+2.05,s*core*.55,core*1.18,.23,.24,sideBase);
-            for(let j=-3;j<=3;j++)beam('lacquer',j*span*.095,level+2.58,s*span*.32,.18,.25,span*.25,sideBase);
-          }
-        }
-        roof(b,span,span,level+2.84,i===4?2.7:2.25,'tower');
-        for(const face of [0,Math.PI/2]){const sideBase=b.clone().multiply(location(0,0,0,face));
-          for(const s of [-1,1])for(let j=-6;j<=6;j++)beam('lightRed',j*span*.068,level+2.83,s*span*.426,.095,.09,span*.12,sideBase);
-        }
-      }
-      column('patina',0,23.9,0,.20,7.2,b);
-      for(let i=0;i<9;i++)column('patina',0,22.3+i*.34,0,1.07-i*.056,.095,b);
-      part(stoneFoot,'brass',0,26.7,0,.47,.58,.47,b);continue;
+      buildPagoda(builder,location(x,Math.max(y,10),z,ang),surfaces);
+      continue;
     }
     if(id===142668904){
       const b=location(x,Math.max(15,y)+.8,z,ang);hall(b,w,d,6.3,true,'beam');
