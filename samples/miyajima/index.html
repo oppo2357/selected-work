@@ -11,7 +11,7 @@ main{max-width:1500px;margin:auto;padding:0 clamp(16px,4vw,64px)}
 header{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:24px 0 15px;border-bottom:1px solid #b1b9aa}
 h1{font:normal clamp(40px,6vw,80px)/.98 Georgia,serif;letter-spacing:-.055em;margin:0}
 header p,.detail,.note{margin:0;max-width:34em;font-size:14px;line-height:1.5}
-header p{text-align:right}#view{overflow:hidden;position:relative;background:#e5e6d8;height:clamp(375px,65svh,780px);margin-top:14px;border:1px solid #c5c8b7}
+header p{text-align:right}header h1 small{display:inline-block;vertical-align:middle;font:400 .26em/1.1 Georgia,serif;letter-spacing:.09em;color:#826941;margin:.2em 0 0 .35em}#view{overflow:hidden;position:relative;background:#d0d8d3;height:clamp(375px,65svh,780px);margin-top:14px;border:1px solid #c5c8b7}
 canvas{width:100%;height:100%;display:block;touch-action:none;outline-offset:-4px}
 #status{position:absolute;inset:44% 12% auto;text-align:center;font-size:14px;color:#244341;background:#f7f4ebed;padding:12px}
 .toolbar{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px;padding:14px 0}
@@ -21,17 +21,21 @@ button[aria-pressed=true]{background:#23453f;color:#fff;border-color:#23453f}but
 @media(max-width:700px){header{padding-top:18px}#view{height:57svh;min-height:325px}header p{font-size:12px}button{padding:8px 10px}.toolbar{gap:9px}.detail{font-size:13px}}
 </style>
 <main>
-<header><h1>Miyajima</h1><p>Seto Inland Sea<br>Hiroshima, Japan</p></header>
+<header><h1>Miyajima <small lang="ja">宮島</small></h1><p>Seto Inland Sea<br>Hiroshima, Japan</p></header>
 <section id="view" aria-label="Interactive three-dimensional coastal landscape">
 <canvas aria-label="Drag to orbit the terrain. Use the buttons below to explore specific landmarks." tabindex="0"></canvas>
 <div id="status" role="status">Loading the island…</div></section>
 <div class="toolbar"><nav aria-label="Landmark views">
 <button type="button" data-view="gate" aria-pressed="true">Great Torii</button>
+<button type="button" data-view="tablet" aria-pressed="false">Inscription</button>
 <button type="button" data-view="coast" aria-pressed="false">Coastline</button>
 <button type="button" data-view="shrine" aria-pressed="false">Itsukushima Shrine</button>
 <button type="button" data-view="pagoda" aria-pressed="false">Five-storied Pagoda</button>
 </nav><p id="detail" class="detail" aria-live="polite">Drag to orbit, scroll or pinch to zoom.</p></div>
-<footer>Drag to orbit, scroll or pinch to zoom. Terrain adapted from the <a href="https://maps.gsi.go.jp/development/demtile.html">Geospatial Information Authority of Japan elevation tiles</a>. Architecture and vegetation are stylised. The water level is illustrative.<br>Torii model · <a href="./gate.blend" download>Editable Blender file</a> · <a href="./gate.glb" download>GLB</a></footer>
+<footer>Drag or use the arrow keys to orbit. Scroll or pinch to zoom. Download the Great Torii as <a href="./gate.blend" download>editable Blender source</a> or <a href="./gate.glb" download>GLB</a>.<br>
+Terrain and aerial imagery adapted from the <a href="https://maps.gsi.go.jp/development/ichiran.html">Geospatial Information Authority of Japan</a>. Map data <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>.
+<details><summary>Map data and architectural references</summary>
+<p>Terrain adapted from <a href="https://maps.gsi.go.jp/development/demtile.html">Geospatial Information Authority of Japan elevation tiles</a>. Building and street locations derived from <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>. The <a href="./inlet.json" download>derived layout</a> is available under <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>. Architectural studies reference the Miyajima Tourist Association’s descriptions of the <a href="https://www.miyajima.or.jp/sightseeing/ss_ootorii.html">Great Torii</a>, <a href="https://www.miyajima.or.jp/sightseeing/ss_itsukushima.html">shrine buildings</a> and <a href="https://www.miyajima.or.jp/sightseeing/ss_goju.html">pagoda</a>. Timber details, seasonal light, trees and tide are artistic interpretations.</p></details></footer>
 </main>
 <script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
 <script type="module" src="./scene.js"></script>

@@ -65,10 +65,10 @@ async function start() {
   const canvas = $('vehicle');
   const app = new pc.Application(canvas, {graphicsDeviceOptions: {alpha: false, antialias: true, powerPreference: 'low-power'}});
   app.graphicsDevice.maxPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-  app.scene.ambientLight = new pc.Color(.60, .65, .67);
+  app.scene.ambientLight = new pc.Color(.63, .64, .65);
   app.autoRender = false;
   const camera = new pc.Entity('Inspection camera');
-  camera.addComponent('camera', {clearColor: new pc.Color(.85,.89,.86), fov: 37, nearClip: .1, farClip: 70});
+  camera.addComponent('camera', {clearColor: new pc.Color(.76,.77,.75), fov: 37, nearClip: .1, farClip: 70});
   app.root.addChild(camera);
   const target = new pc.Vec3(0,.88,0);
   let yaw = .86, pitch = .30;
@@ -89,13 +89,30 @@ async function start() {
       shadowResolution:2048, shadowBias:.18, normalOffsetBias:.02});
     light.setEulerAngles(...rotation); app.root.addChild(light);
   }
-  illuminate('Softbox', [-59,-34,-26], new pc.Color(1,.96,.86), 1.7, true);
-  illuminate('Fill', [-21,143,11], new pc.Color(.88,.94,1), .75, false);
+  illuminate('Overhead key', [-72,-26,0], new pc.Color(1,.97,.91), 1.40, false);
+  illuminate('Front fill', [-25,28,0], new pc.Color(.92,.96,1), .95, false);
+  illuminate('Roof edge', [-32,154,0], new pc.Color(1,.92,.82), .65, false);
   const floor = new pc.Entity('Studio floor');
-  const surface = new pc.StandardMaterial(); surface.diffuse = new pc.Color(.77,.82,.79);
+  const surface = new pc.StandardMaterial(); surface.diffuse = new pc.Color(.70,.71,.70);
   surface.gloss = .08; surface.update();
   floor.addComponent('render', {type:'plane', castShadows:false, receiveShadows:true, material:surface});
   floor.setLocalScale(100,1,100); floor.setPosition(0,-.006,0); app.root.addChild(floor);
+  const contactMap=document.createElement('canvas'); contactMap.width=256;contactMap.height=512;
+  const ctx=contactMap.getContext('2d');
+  function shade(x,y,w,h,opacity){
+    ctx.save();ctx.translate(x,y);ctx.scale(w,h);
+    const g=ctx.createRadialGradient(0,0,0,0,0,1);
+    g.addColorStop(0,'rgba(36,39,38,'+opacity+')');g.addColorStop(.55,'rgba(36,39,38,'+(opacity*.58)+')');g.addColorStop(1,'rgba(36,39,38,0)');
+    ctx.fillStyle=g;ctx.fillRect(-1,-1,2,2);ctx.restore();
+  }
+  shade(128,256,115,227,.68);
+  for(const x of [66,190])for(const y of [135,376])shade(x,y,23,27,.67);
+  const texture=new pc.Texture(app.graphicsDevice,{format:pc.PIXELFORMAT_R8_G8_B8_A8,mipmaps:true});texture.setSource(contactMap);
+  const shadowMaterial=new pc.StandardMaterial();shadowMaterial.useLighting=false;
+  shadowMaterial.emissive=new pc.Color(1,1,1);shadowMaterial.emissiveMap=texture;
+  shadowMaterial.opacityMap=texture;shadowMaterial.opacityMapChannel='a';shadowMaterial.blendType=pc.BLEND_NORMAL;shadowMaterial.depthWrite=false;shadowMaterial.update();
+  const contact=new pc.Entity('Contact shadow');contact.addComponent('render',{type:'plane',castShadows:false,receiveShadows:false,material:shadowMaterial});
+  contact.setLocalScale(3.15,1,5.1);contact.setPosition(0,-.003,0);app.root.addChild(contact);
   const asset = await new Promise((resolve,reject) => app.assets.loadFromUrl('courier.glb','container',
     (error, loaded) => error ? reject(error) : resolve(loaded)));
   const van = asset.resource.instantiateRenderEntity(); app.root.addChild(van);
@@ -108,8 +125,8 @@ async function start() {
         const material = instance.material;
         if (!highlighted.has(material)) {
           const tint = material.clone();
-          tint.diffuse.lerp(material.diffuse,new pc.Color(.40,.74,.70),.24);
-          tint.emissive = new pc.Color(.016,.055,.05); tint.update(); highlighted.set(material,tint);
+          tint.diffuse.lerp(material.diffuse,new pc.Color(.76,.82,.73),.10);
+          tint.emissive = new pc.Color(.022,.035,.028); tint.update(); highlighted.set(material,tint);
         }
         const positions = [], indices = [];
         instance.mesh.getPositions(positions); instance.mesh.getIndices(indices);

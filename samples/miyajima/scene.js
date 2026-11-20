@@ -1,213 +1,77 @@
 import * as T from 'three';
 import {OrbitControls} from './OrbitControls.js';
 import {GLTFLoader} from './addons/loaders/GLTFLoader.js';
+import {buildArchitecture, makeBuilder} from './architecture.js';
+import {makeLand, makeSky, makeWater} from './inlet.js';
 
-const canvas = document.querySelector('canvas');
-const status = document.querySelector('#status');
-const material = color => new T.MeshStandardMaterial({color, roughness:0.95, flatShading:true});
-const mat = Object.fromEntries(Object.entries({
-  sand:0xc6aa7c, water:0x76b5b2, stone:0xc5ba9b, timber:0x8d654d, red:0xca4c32,
-  cream:0xf1e2bd, roof:0x424d4c, gold:0xc19f58, tile:0x777b6b,
-}).map(([name, color]) => [name, material(color)]));
-const box = new T.BoxGeometry();
-const cylinder = new T.CylinderGeometry(.5,.5,1,12);
-const roofGeometry = new T.BufferGeometry();
-// A shallow hip roof with a raised ridge and slightly upturned eaves.
-const roofPoints = [[-.52,0,-.54],[.52,0,-.54],[.52,0,.54],[-.52,0,.54],
-                    [-.44,.06,-.45],[.44,.06,-.45],[.44,.06,.45],[-.44,.06,.45],
-                    [-.32,.95,0],[.32,.95,0]];
-roofGeometry.setAttribute('position', new T.Float32BufferAttribute(roofPoints.flat(),3));
-roofGeometry.setIndex([0,4,1,1,4,5, 1,5,2,2,5,6, 2,6,3,3,6,7, 3,7,0,0,7,4,
-                       4,8,5,5,8,9, 5,9,6, 6,9,7,7,9,8, 7,8,4, 0,1,2,0,2,3]);
-roofGeometry.computeVertexNormals();
-for (const color of [mat.roof,mat.tile]) color.side = T.DoubleSide;
-const views = {
-  coast:{target:[24,5,39], offset:[-235,218,-317], text:'Explore the tidal inlet. Drag to orbit, scroll or pinch to zoom.'},
-  gate:{target:[-85,8,-66], offset:[-32,13,-37], text:'The Great Torii stands offshore on two main pillars and four smaller supports.'},
-  shrine:{target:[60,7,93], offset:[-81,53,-99], text:'At Itsukushima Shrine, vermilion corridors connect halls along the edge of the inlet.'},
-  pagoda:{target:[169,29,-42], offset:[-55,44,-72], text:'Five stacked roofs mark the hill above the shrine. Lower the camera to see their silhouette.'},
+const canvas=document.querySelector('canvas'),status=document.querySelector('#status');
+const views={
+  gate:{target:[-83.7,8.0,-64],offset:[-16,-3.85,-31],text:'At water level, the reflection reveals the spacing of the two camphor pillars and their four supporting posts.'},
+  tablet:{target:[-85,12.2,-64],offset:[-8.2,-1.55,-9.8],text:'The inscription faces the open water. Look along the roof edge to see the layered capping above the vermilion beams.'},
+  coast:{target:[0,3,12],offset:[-199,175,-251],text:'From the Seto Inland Sea, the shrine sits between the waterfront town and the wooded slopes of Mount Misen.'},
+  shrine:{target:[51,5.6,61],offset:[-33,5,-46],text:'The Takabutai dance stage faces the Great Torii. Raised walkways lead around the tidal inlet to the worship halls.'},
+  pagoda:{target:[154.4,26.0,-52.7],offset:[21,3,-43],text:'Five tiers of cypress-bark eaves rise above the hill beside Senjōkaku. The study shows the tower without restoration scaffolding.'}
 };
-
-async function start() {
-  const renderer = new T.WebGLRenderer({canvas, antialias:true, powerPreference:'low-power'});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
-  renderer.setClearColor(0xe4e6d9);
-  const scene = new T.Scene();
-  scene.fog = new T.FogExp2(0xe4e6d9,.00082);
-  scene.add(new T.HemisphereLight(0xfff7e1,0xabc5bb,2.1));
-  const sun = new T.DirectionalLight(0xffeed0,2);
-  sun.position.set(-240,400,-170);
-  scene.add(sun);
-  const camera = new T.PerspectiveCamera(36,1,.3,3000);
-  const controls = new OrbitControls(camera,canvas);
-  controls.minDistance=23;
-  controls.maxDistance=1500;
-  controls.maxPolarAngle=Math.PI*.47;
-  controls.enablePan=false;
-  controls.enableDamping=true;
-  const [buffer, gateway] = await Promise.all([
-    fetch('./elevation.bin').then(response => {
-      if (!response.ok) throw new Error('Elevation is unavailable');
-      return response.arrayBuffer();
-    }),
-    new GLTFLoader().loadAsync('./gate.glb'),
-  ]);
-  const data = new Int16Array(buffer);
-  const cols=113, rows=111, step=8;
-  if (data.length !== cols*rows) throw new Error('Incomplete terrain grid');
-  function altitude(x,z) {
-    const c=T.MathUtils.clamp(Math.round(x/step)+56,0,cols-1);
-    const r=T.MathUtils.clamp(Math.round(z/step)+55,0,rows-1);
-    return data[r*cols+c]===-32768 ? -4.5 : data[r*cols+c]/10;
+async function start(){
+  const renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.outputColorSpace=T.SRGBColorSpace;
+  renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+  const scene=new T.Scene();scene.background=new T.Color(0xc3ccc7);scene.fog=new T.FogExp2(0xb5c6c2,.00091);
+  const light=new T.HemisphereLight(0xfff1d8,0xc1c8bf,1.68);scene.add(light);
+  const sun=new T.DirectionalLight(0xffe8ca,2.12);sun.position.set(-118,110,-82);sun.target.position.set(23,2,25);
+  sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-163,right:163,top:145,bottom:-145,near:.5,far:435});sun.shadow.normalBias=.055;sun.shadow.bias=-.00018;scene.add(sun,sun.target);
+  const camera=new T.PerspectiveCamera(38,1,.35,9500),controls=new OrbitControls(camera,canvas);
+  controls.enableDamping=true;controls.enablePan=false;controls.minDistance=9;controls.maxDistance=650;controls.maxPolarAngle=Math.PI*.495;
+  const load=async(path,type)=>{const r=await fetch(path);if(!r.ok)throw Error(path+' '+r.status);return r[type]();};
+  const loader=new T.TextureLoader();
+  const [close,far,layout,gate,textures]=await Promise.all([load('elevation.bin','arrayBuffer'),load('regional-elevation.bin','arrayBuffer'),
+    load('inlet.json','json'),new GLTFLoader().loadAsync('gate.glb'),
+    Promise.all(['inlet-ortho','mountain-ortho','canopy-5','canopy-26','canopy-67','bark-courses','deck-boards','granite'].map(async(n,i)=>{
+      const map=await loader.loadAsync(n+'.webp');map.colorSpace=T.SRGBColorSpace;map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+      if(i>=5){map.wrapS=map.wrapT=T.RepeatWrapping;}
+      return map;
+    }))]);
+  const b=makeBuilder(scene), ground=makeLand(scene,b,new Int16Array(close),new Int16Array(far),layout,textures.slice(0,5));
+  buildArchitecture(b,layout,ground,scene,textures.slice(5));b.flush();makeSky(scene);
+  gate.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+  gate.scene.position.set(-85,0,-64);gate.scene.rotation.y=.80;scene.add(gate.scene);
+  const water=makeWater(scene,sun);
+  let transition=null,active='gate',last=0,waterTime=0;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  function view(key,instant=false){
+    const v=views[key],target=new T.Vector3(...v.target);
+    const scale=Math.max(1,1.02/camera.aspect);
+    const position=new T.Vector3(...v.offset).multiplyScalar(scale).add(target);
+    if(instant||reduced.matches){camera.position.copy(position);controls.target.copy(target);transition=null;controls.update();}
+    else transition={from:camera.position.clone(),at:controls.target.clone(),position,target,start:performance.now()};
+    active=key;document.querySelectorAll('[data-view]').forEach(button=>{
+      if(button.tagName==='BUTTON')button.setAttribute('aria-pressed',String(button.dataset.view===key));
+    });document.querySelector('#detail').textContent=v.text;
   }
-  let seed=194502;
-  function random() {
-    seed = (Math.imul(seed,1664525)+1013904223)>>>0;
-    return seed/4294967296;
-  }
-  const positions=[], colors=[], indices=[];
-  const shore=new T.Color(0xd3be90), meadow=new T.Color(0xaabc83), hill=new T.Color(0x719671);
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) {
-    const x=(c-56)*step,z=(r-55)*step,y=altitude(x,z);
-    positions.push(x,y,z);
-    const color=shore.clone().lerp(meadow,T.MathUtils.clamp(y/14,0,1)).lerp(hill,T.MathUtils.clamp((y-14)/52,0,1));
-    color.multiplyScalar(.96+random()*.07);
-    colors.push(color.r,color.g,color.b);
-    if(r<rows-1 && c<cols-1) {
-      const k=r*cols+c;
-      indices.push(k,k+cols,k+1,k+1,k+cols,k+cols+1);
-    }
-  }
-  const terrain=new T.BufferGeometry();
-  terrain.setAttribute('position',new T.Float32BufferAttribute(positions,3));
-  terrain.setAttribute('color',new T.Float32BufferAttribute(colors,3));
-  terrain.setIndex(indices);
-  terrain.computeVertexNormals();
-  scene.add(new T.Mesh(terrain,new T.MeshStandardMaterial({vertexColors:true,flatShading:true})));
-  function mesh(geometry,surface,x,y,z,sx,sy,sz,parent=scene) {
-    const m=new T.Mesh(geometry,surface);
-    m.position.set(x,y,z); m.scale.set(sx,sy,sz); parent.add(m);
-    return m;
-  }
-  mesh(box,mat.water,0,-4.0,0,896,8.8,880);
-  mesh(box,mat.stone,0,-13,0,897,11,881);
-  const edge=[];
-  for(let c=0;c<cols;c++) edge.push([c,0]);
-  for(let r=1;r<rows;r++) edge.push([cols-1,r]);
-  for(let c=cols-2;c>=0;c--) edge.push([c,rows-1]);
-  for(let r=rows-2;r>0;r--) edge.push([0,r]);
-  const walls=[];
-  for(let i=0;i<edge.length;i++) {
-    const [c,r]=edge[i], [d,s]=edge[(i+1)%edge.length];
-    const a=[(c-56)*step,altitude((c-56)*step,(r-55)*step),(r-55)*step];
-    const b=[(d-56)*step,altitude((d-56)*step,(s-55)*step),(s-55)*step];
-    const lowA=[a[0],-8,a[2]],lowB=[b[0],-8,b[2]];
-    walls.push(...a,...b,...lowA,...lowA,...b,...lowB);
-  }
-  const skirt=new T.BufferGeometry();
-  skirt.setAttribute('position',new T.Float32BufferAttribute(walls,3));skirt.computeVertexNormals();
-  mat.sand.side=T.DoubleSide;scene.add(new T.Mesh(skirt,mat.sand));
-
-  // Draw repeated scenery using one draw call per geometry/material combination.
-  const batches=new Map(), transform=new T.Object3D();
-  function repeat(geo,surface,x,y,z,sx,sy,sz,angle=0) {
-    const key=geo.uuid+surface.uuid;
-    if(!batches.has(key)) batches.set(key,{geo,surface,matrices:[]});
-    transform.position.set(x,y,z);transform.rotation.set(0,angle,0);transform.scale.set(sx,sy,sz);
-    transform.updateMatrix();batches.get(key).matrices.push(transform.matrix.clone());
-  }
-  const ripples=material(0xa9d1c6);
-  for(let i=0;i<2200;i++) {
-    const x=(random()-.5)*888,z=(random()-.5)*872;
-    if(altitude(x,z)<-1) repeat(box,ripples,x,.43,z,2+random()*9,.027,.13+random()*.14,-.15);
-  }
-  const leaves=[0x446f56,0x527e59,0x679062,0x7e9d6b].map(material);
-  const crown=new T.IcosahedronGeometry(1,0);
-  const gate={x:-85,z:-66}, shrine={x:61,z:99}, pagoda={x:169,z:-42};
-  const clear=(x,z) => (Math.abs(x-shrine.x)<62 && Math.abs(z-shrine.z)<49) || Math.hypot(x-pagoda.x,z-pagoda.z)<19;
-  for(let i=0;i<7600;i++) {
-    const x=(random()-.5)*887,z=(random()-.5)*871,y=altitude(x,z);
-    if(y<13 || clear(x,z) || (y<24 && random()>.24)) continue;
-    const h=4+random()*7,w=h*(.36+random()*.17);
-    repeat(cylinder,mat.timber,x,y+h*.22,z,.7,h*.62,.7);
-    repeat(crown,leaves[Math.floor(random()*leaves.length)],x,y+h*.70,z,w,h*.52,w,random()*6);
-  }
-  const plaster=[0xe6d5b6,0xd7b99a,0xd7ccb4].map(material);
-  for(let gx=-410;gx<430;gx+=15) for(let gz=-415;gz<430;gz+=15) {
-    const x=gx+random()*4,z=gz+random()*4,y=altitude(x,z);
-    if(y<2.0 || y>16 || clear(x,z) || random()>.61 || Math.abs(y-altitude(x+6,z+6))>2.2) continue;
-    const w=5+random()*4,d=4+random()*2.5,h=3+random()*2.7,angle=.22+(Math.floor((gx+gz)/100)%2)*.12;
-    repeat(box,plaster[Math.floor(random()*3)],x,y+h*.38,z,w,h*1.25,d,angle);
-    repeat(roofGeometry,random()>.27?mat.roof:mat.tile,x,y+h,z,w*1.17,2.2,d*1.22,angle);
-  }
-  const shrineGroup=new T.Group();shrineGroup.position.set(shrine.x,6.3,shrine.z);shrineGroup.rotation.y=.34;scene.add(shrineGroup);
-  function building(x,z,w,d,wallH) {
-    mesh(box,mat.timber,x,0,z,w+2,.9,d+2,shrineGroup);
-    mesh(box,mat.cream,x,wallH*.53,z,w,wallH,d,shrineGroup);
-    for(let i=0;i<=4;i++) for(const side of [-1,1]) mesh(box,mat.red,x-w/2+i*w/4,wallH*.50,z+side*d*.50,.52,wallH+1,.55,shrineGroup);
-    mesh(roofGeometry,mat.roof,x,wallH+.3,z,w*1.32,wallH*.72,d*1.45,shrineGroup);
-  }
-  function cloister(x,z,length,across) {
-    const corridor=new T.Group();corridor.position.set(x,0,z);corridor.rotation.y=across?Math.PI/2:0;shrineGroup.add(corridor);
-    mesh(box,mat.timber,0,-.25,0,length,1,4.4,corridor);
-    for(const side of [-1,1]){
-      mesh(box,mat.red,0,1.3,side*1.8,length,.3,.3,corridor);
-      for(let i=-length/2;i<=length/2;i+=4) mesh(box,mat.red,i,.1,side*1.75,.45,7.0,.45,corridor);
-    }
-    mesh(roofGeometry,mat.roof,0,3.6,0,length+2,1.9,5.6,corridor);
-  }
-  cloister(-25,-11,47,false);cloister(24,-11,48,false);
-  cloister(-45,2,30,true);cloister(43,2,30,true);
-  building(0,-9,15,10,4.2);building(0,8,23,13,5.5);building(0,25,16,11,5.4);
-  building(-44,19,10,8,3.7);building(43,19,10,8,3.7);
-  mesh(box,mat.timber,0,-.2,-24,18,.8,19,shrineGroup);
-  const pagY=altitude(pagoda.x,pagoda.z);
-  mesh(box,mat.stone,pagoda.x,pagY+.7,pagoda.z,14,1.4,14);
-  for(let i=0;i<5;i++) {
-    const w=11.2-i*1.15, y=pagY+1.4+i*4.5;
-    mesh(box,mat.red,pagoda.x,y+1.65,pagoda.z,w*.7,3.3,w*.7);
-    mesh(roofGeometry,mat.roof,pagoda.x,y+3.0,pagoda.z,w*1.26,2.6,w*1.26);
-  }
-  mesh(cylinder,mat.gold,pagoda.x,pagY+26,pagoda.z,.38,7,.38);
-  for(let i=0;i<5;i++) mesh(cylinder,mat.roof,pagoda.x,pagY+24+i*.66,pagoda.z,1.6-i*.16,.24,1.6-i*.16);
-  gateway.scene.position.set(gate.x,.30,gate.z);gateway.scene.rotation.y=.67;scene.add(gateway.scene);
-  for(const {geo,surface,matrices} of batches.values()){
-    const inst=new T.InstancedMesh(geo,surface,matrices.length);
-    matrices.forEach((m,i)=>inst.setMatrixAt(i,m));scene.add(inst);
-  }
-  let transition=null, active='gate';
-  function setView(key,instant=false) {
-    const view=views[key], target=new T.Vector3(...view.target);
-    const distance=canvas.clientWidth/canvas.clientHeight < .9 ? 1.19 : 1;
-    const position=new T.Vector3(...view.offset).multiplyScalar(distance).add(target);
-    if(instant || matchMedia('(prefers-reduced-motion:reduce)').matches) {
-      controls.target.copy(target);camera.position.copy(position);controls.update();transition=null;
-    } else {
-      transition={from:camera.position.clone(),at:controls.target.clone(),position,target,start:performance.now()};
-    }
-    document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===key)));
-    document.querySelector('#detail').textContent=view.text;active=key;
-  }
-  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  document.querySelectorAll('button[data-view]').forEach(el=>el.onclick=()=>view(el.dataset.view));
   controls.addEventListener('start',()=>{transition=null;});
-  function resize(){
-    renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);
-    camera.aspect=canvas.clientWidth/canvas.clientHeight;camera.updateProjectionMatrix();
-  }
-  new ResizeObserver(resize).observe(canvas);resize();setView(active,true);
-  status.hidden=true;
-  renderer.setAnimationLoop(now=>{
-    if(transition){
-      const t=T.MathUtils.clamp((now-transition.start)/750,0,1),ease=t*t*(3-2*t);
-      camera.position.lerpVectors(transition.from,transition.position,ease);
-      controls.target.lerpVectors(transition.at,transition.target,ease);
-      if(t===1) transition=null;
-    }
-    controls.update();renderer.render(scene,camera);
-    canvas.dataset.view=active;
+  controls.listenToKeyEvents(canvas);controls.keys={LEFT:'ArrowLeft',UP:'ArrowUp',RIGHT:'ArrowRight',BOTTOM:'ArrowDown'};
+  canvas.addEventListener('keydown',e=>{
+    if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
+    e.preventDefault();transition=null;
+    const s=new T.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+    if(e.key==='ArrowLeft')s.theta-=.09;if(e.key==='ArrowRight')s.theta+=.09;
+    if(e.key==='ArrowUp')s.phi-=.06;if(e.key==='ArrowDown')s.phi+=.06;
+    s.phi=T.MathUtils.clamp(s.phi,.12,controls.maxPolarAngle);
+    camera.position.copy(controls.target).add(new T.Vector3().setFromSpherical(s));controls.update();
   });
+  function resize(){renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);camera.aspect=canvas.clientWidth/canvas.clientHeight;camera.updateProjectionMatrix();}
+  new ResizeObserver(resize).observe(canvas);resize();view('gate',true);
+  function frame(now){
+    if(document.hidden || (now-last<32 && !transition))return;
+    const dt=Math.min((now-last)/1000,.12);last=now;
+    if(transition){const t=T.MathUtils.clamp((now-transition.start)/830,0,1),ease=t*t*(3-2*t);
+      camera.position.lerpVectors(transition.from,transition.position,ease);controls.target.lerpVectors(transition.at,transition.target,ease);
+      if(t===1)transition=null;}
+    controls.update();if(!reduced.matches)waterTime+=dt*.34;water.material.uniforms.time.value=waterTime;
+    renderer.render(scene,camera);canvas.dataset.view=active;canvas.dataset.settled=String(transition===null);status.hidden=true;
+  }
+  renderer.setAnimationLoop(frame);
 }
-start().catch(error=>{
-  console.error(error);
-  status.textContent='The interactive view needs WebGL. The torii model is available to download below.';
-});
+start().catch(e=>{console.error(e);status.textContent='The live view could not load. Download the torii below to inspect it in 3D.';});
