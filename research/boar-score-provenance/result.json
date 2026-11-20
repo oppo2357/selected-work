@@ -1,0 +1,60 @@
+{
+  "benchRevision": "b41a25acfabf89f1d015103ca1329554f985a257",
+  "dataRevision": "f96e277cf8584b38c35c01106c1fe77457dfaa81",
+  "sharedTraceItems": 51,
+  "differentAnswers": 51,
+  "runs": [
+    {
+      "traces": "L0_15B_closedbook",
+      "judgments": "L0_15B_closedbook",
+      "exit": 0,
+      "judgedItems": 46,
+      "itemsWithConflictingRunId": 0,
+      "floorAdjustedU": 0.2567191844300278,
+      "ci95": [
+        0.18021349864607702,
+        0.33642304539687173
+      ],
+      "bar": "BELOW (95% CI upper bound < 0.50)"
+    },
+    {
+      "traces": "L0_15B_closedbook",
+      "judgments": "L3_4B_phone_cut7",
+      "exit": 0,
+      "judgedItems": 47,
+      "itemsWithConflictingRunId": 47,
+      "floorAdjustedU": 0.44727272727272727,
+      "ci95": [
+        0.3696458621752381,
+        0.528097347409145
+      ],
+      "bar": "INCONCLUSIVE (95% CI contains 0.50)"
+    },
+    {
+      "traces": "L3_4B_phone_cut7",
+      "judgments": "L0_15B_closedbook",
+      "exit": 0,
+      "judgedItems": 46,
+      "itemsWithConflictingRunId": 46,
+      "floorAdjustedU": 0.2567191844300278,
+      "ci95": [
+        0.18021349864607702,
+        0.33642304539687173
+      ],
+      "bar": "BELOW (95% CI upper bound < 0.50)"
+    },
+    {
+      "traces": "L3_4B_phone_cut7",
+      "judgments": "L3_4B_phone_cut7",
+      "exit": 0,
+      "judgedItems": 47,
+      "itemsWithConflictingRunId": 0,
+      "floorAdjustedU": 0.44727272727272727,
+      "ci95": [
+        0.3696458621752381,
+        0.528097347409145
+      ],
+      "bar": "INCONCLUSIVE (95% CI contains 0.50)"
+    }
+  ]
+}
