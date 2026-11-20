@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {OrbitControls} from '../miyajima/OrbitControls.js';
 import {makeSegment} from './model.js';
-import {fitLandmarks,surfaceRms} from './fit.js';
+import {fitLandmarks,minimumAltitude,surfaceErrors} from './fit.js';
 
 const $=id=>document.getElementById(id);
 const model=makeSegment();
@@ -10,7 +10,8 @@ const initial=new T.Matrix4().compose(new T.Vector3(2.8,3.6,-5.2),
   new T.Quaternion().setFromEuler(new T.Euler(.19,-.14,.12)),unit);
 const transformed=points=>points.map(p=>p.clone().applyMatrix4(initial));
 const scanVertices=transformed(model.vertices);
-const scanPicks=transformed(model.picks);
+const inverseInitial=initial.clone().invert();
+const minTriangleHeight=.5;
 let offsetPick=false;
 let view;
 
@@ -40,13 +41,16 @@ function buildView() {
   const grid=new T.GridHelper(82,41,0x3e6264,0x29464a);grid.position.y=-4.1;scene.add(grid);
   // Rings mark the reference picks. Filled dots travel with the scan.
   const marker=new T.SphereGeometry(.17,14,10);
-  const dots=[];
+  const dots=[],rings=[];
   const sourceMat=new T.MeshBasicMaterial({color:0x573319});
-  for(const p of model.picks){
+  for(const p of model.picks.spread){
     const dot=new T.Mesh(marker,sourceMat);scan.add(dot);dots.push(dot);
     const torus=new T.Mesh(new T.TorusGeometry(.33,.065,8,24),new T.MeshBasicMaterial({color:0xa6fff0}));
-    torus.rotation.x=-Math.PI/2;torus.position.copy(p);torus.position.y+=.05;scene.add(torus);
+    torus.rotation.x=-Math.PI/2;torus.position.copy(p);scene.add(torus);rings.push(torus);
   }
+  const errorLine=new T.Line(new T.BufferGeometry(),new T.LineBasicMaterial({color:0xff3e52,depthTest:false}));
+  errorLine.geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(6),3));
+  errorLine.frustumCulled=false;errorLine.renderOrder=3;scene.add(errorLine);
   function setCamera(top){
     camera.up.set(0,top?0:1,top?-1:0);
     camera.position.copy(controls.target).add(top?new T.Vector3(0,62,0):new T.Vector3(15,32,54));
@@ -61,29 +65,46 @@ function buildView() {
     camera.updateProjectionMatrix();renderer.setSize(w,h,false);draw();
   }
   new ResizeObserver(resize).observe(canvas);resize();setCamera(false);
-  return (pose,picks)=>{
+  return (pose,picks,fixed,segment)=>{
     scan.matrix.copy(pose);
-    for(let i=0;i<dots.length;i++)dots[i].position.copy(picks[i]).applyMatrix4(initial.clone().invert());
+    for(let i=0;i<dots.length;i++){
+      dots[i].position.copy(picks[i]).applyMatrix4(inverseInitial);
+      rings[i].position.copy(fixed[i]);rings[i].position.y+=.05;
+    }
+    errorLine.visible=Boolean(segment);
+    if(segment){
+      const attr=errorLine.geometry.attributes.position;
+      segment.forEach((p,i)=>attr.setXYZ(i,p.x,p.y,p.z));attr.needsUpdate=true;
+    }
     scan.matrixWorldNeedsUpdate=true;draw();
   };
 }
 
 function render(){
-  const fraction=Number($('mix').value)/100;
-  const measured=scanPicks.map(v=>v.clone());
+  const fixed=model.picks[$('preset').value];
+  const measured=transformed(fixed);
   if(offsetPick)measured[2].y+=.5;
-  const correction=fitLandmarks(measured,model.picks);
+  const height=Math.min(minimumAltitude(fixed),minimumAltitude(measured));
+  const blocked=height<minTriangleHeight;
+  if(blocked)$('mix').value=0;
+  $('apply').disabled=blocked;$('mix').disabled=blocked;
+  const fraction=Number($('mix').value)/100;
+  const correction=blocked?new T.Matrix4():fitLandmarks(measured,fixed);
   const rotation=new T.Quaternion().setFromRotationMatrix(correction);
   const translation=new T.Vector3().setFromMatrixPosition(correction);
   const intermediate=new T.Matrix4().compose(translation.multiplyScalar(fraction),
     new T.Quaternion().slerp(rotation,fraction),unit);
-  const rms=surfaceRms(scanVertices,model.vertices,intermediate);
-  $('rms').textContent=rms.toFixed(3);$('percent').textContent=Math.round(fraction*100)+'%';
+  const error=surfaceErrors(scanVertices,model.vertices,intermediate);
+  $('rms').textContent=error.rms.toFixed(3);$('maximum').textContent=error.max.toFixed(3);$('percent').textContent=Math.round(fraction*100)+'%';
   $('count').textContent=model.vertices.length.toLocaleString('en-US')+' corresponding vertices';
-  $('summary').textContent=fraction===1
-    ? (offsetPick?'One displaced pick leaves measurable error across the surface.':'The three exact pairs recover the known rigid pose.')
+  $('summary').textContent=blocked
+    ? 'Fit blocked. The smallest triangle height is '+height.toFixed(3)+' mm. This study requires at least 0.5 mm. Choose wider-spaced picks.'
+    : fraction===1
+    ? (offsetPick?'The red line joins the most separated pair of surface vertices.':'The three exact pairs recover the known rigid pose.')
     : (fraction===0?'The two surfaces start in different poses.':'Surface error is measured at the current pose.');
-  view?.(intermediate.clone().multiply(initial),measured);
+  const segment=fraction===1 && error.max>.001
+    ? [model.vertices[error.index],scanVertices[error.index].clone().applyMatrix4(intermediate)]:null;
+  view?.(intermediate.clone().multiply(initial),measured,fixed,segment);
 }
 try{view=buildView();}catch(error){
   console.warn('Mesh view unavailable',error);
@@ -91,6 +112,7 @@ try{view=buildView();}catch(error){
   document.querySelector('.camera').hidden=true;
 }
 $('mix').oninput=render;
+$('preset').onchange=render;
 $('apply').onclick=()=>{$('mix').value=100;render();};
 $('reset').onclick=()=>{$('mix').value=0;render();};
 for(const radio of document.querySelectorAll('[name=mode]'))radio.onchange=()=>{offsetPick=radio.value==='offset';render();};

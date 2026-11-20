@@ -66,6 +66,12 @@ export function makeSegment(){
   const geo=new BufferGeometry();
   geo.setAttribute('position',new Float32BufferAttribute(vertices.flatMap(v=>v.toArray()),3));
   geo.setIndex(indices); geo.computeVertexNormals();
-  const picks=[sample(crowns[0],.7,4.1),sample(crowns[2],.68,5.1),sample(crowns[1],.53,1.7)];
+  const picks={
+    spread:[sample(crowns[0],.7,4.1),sample(crowns[2],.68,5.1),sample(crowns[1],.53,1.7)],
+    clustered:[sample(crowns[0],.71,3.55),sample(crowns[0],.72,5.76),sample(crowns[0],.79,4.7)]
+  };
+  // Three picks in one actual mesh face, with the third almost on its edge.
+  const a=vertices[17*count],b=vertices[18*count],c=vertices[17*count+1];
+  picks.aligned=[a,b,a.clone().lerp(b,.5).lerp(c,.025)];
   return {geo,vertices,picks,lines};
 }

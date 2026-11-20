@@ -17,11 +17,19 @@ export function fitLandmarks(moving, fixed) {
   return landmarkFrame(fixed).multiply(landmarkFrame(moving).invert());
 }
 
-export function surfaceRms(moving, fixed, transform) {
+export function minimumAltitude([a,b,c]) {
+  const longest=Math.max(a.distanceTo(b),b.distanceTo(c),c.distanceTo(a));
+  if (longest===0) return 0;
+  return new Vector3().crossVectors(new Vector3().subVectors(b,a),new Vector3().subVectors(c,a)).length()/longest;
+}
+
+export function surfaceErrors(moving, fixed, transform) {
   const sample = new Vector3();
-  let sum = 0;
+  let sum = 0, peak = 0, index = 0;
   for (let i = 0; i < moving.length; i++) {
-    sum += sample.copy(moving[i]).applyMatrix4(transform).distanceToSquared(fixed[i]);
+    const squared=sample.copy(moving[i]).applyMatrix4(transform).distanceToSquared(fixed[i]);
+    sum+=squared;
+    if (squared>peak){peak=squared;index=i;}
   }
-  return Math.sqrt(sum / fixed.length);
+  return {rms:Math.sqrt(sum/fixed.length),max:Math.sqrt(peak),index};
 }

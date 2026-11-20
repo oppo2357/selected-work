@@ -17,8 +17,10 @@
       <div class="camera"><button id="oblique" aria-pressed="true">Oblique</button><button id="top" aria-pressed="false">Top</button></div>
     </section>
     <section class="panel" aria-label="Registration controls">
-      <div class="metric"><h2>Surface RMS error</h2><p><output id="rms">—</output> <small>mm</small></p><div id="count"></div></div>
-      <fieldset><legend>Landmark placement</legend><label><input type="radio" name="mode" value="exact" checked> Exact pairs</label><label><input type="radio" name="mode" value="offset"> Offset one pick by 0.5 mm</label></fieldset>
+      <div class="metric"><h2>Surface RMS error</h2><p><output id="rms">—</output> <small>mm</small></p><div>Maximum vertex error <strong><output id="maximum">—</output> mm</strong></div><div id="count"></div></div>
+      <fieldset><legend>Landmark placement</legend>
+        <label class="preset">Pick locations <select id="preset"><option value="spread">Across three crowns</option><option value="clustered">On one crown</option><option value="aligned">Almost in a line</option></select></label>
+        <label><input type="radio" name="mode" value="exact" checked> Exact pairs</label><label><input type="radio" name="mode" value="offset"> Offset one pick by 0.5 mm</label></fieldset>
       <div class="mix"><label for="mix">Pose interpolation</label><output for="mix" id="percent">0%</output><input id="mix" type="range" min="0" max="100" value="0"><div class="ends"><span>Initial</span><span>Fitted</span></div></div>
       <div class="actions"><button id="apply">Apply fit</button><button id="reset">Reset pose</button></div>
       <p id="summary" aria-live="polite"></p>
