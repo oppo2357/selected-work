@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>De un pliego a un libro · Taller de papel</title>
+<style>
+*{box-sizing:border-box} :root{--ink:#243e36;--rust:#963b21;--paper:#fcf9ef;--line:#a8afa2}
+body{margin:0;background:#e6e9df;color:var(--ink);font:16px Georgia,"Times New Roman",serif}
+.controls{display:flex;align-items:center;justify-content:space-between;gap:10px;width:min(625px,calc(100% - 28px));margin:14px auto;color:var(--ink);font:15px Arial,sans-serif}
+button,.download{font:inherit;font-weight:600;color:inherit;padding:9px 13px;background:transparent;border:1px solid #788a7b;border-radius:4px;text-decoration:none}
+button{cursor:pointer} button:disabled{opacity:.43;cursor:default}button:focus-visible,a:focus-visible{outline:3px solid var(--rust);outline-offset:3px}
+.pager{display:none;align-items:center;gap:8px}.ready .pager{display:flex}
+.page{background:var(--paper);padding:38px 54px 34px;width:min(625px,100%);min-height:825px;margin:0 auto 22px;box-shadow:0 4px 20px #243e3615}
+.ready .page:not(.current){display:none}.folio{display:flex;justify-content:space-between;border-bottom:1px solid var(--ink);padding-bottom:11px;font:600 12px/1.2 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+h2{font:normal 52px/1.02 Georgia,serif;letter-spacing:-.047em;max-width:100%;margin:28px 0 13px}
+.page-1 h2{font-size:64px;max-width:440px}.lead{font-size:21px;line-height:1.32;margin:0;color:#3e5145;font-style:italic}
+figure{margin:19px 0}.drawing{padding:20px 0;display:grid;place-items:center;background:#eaecdf}
+.sheet{width:55%;aspect-ratio:297/210;position:relative;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;border:1.6px solid var(--ink);background:var(--paper)}
+.sheet span{display:grid;place-items:center;border-right:1px dashed #6f8173;border-bottom:1px dashed #6f8173}
+.sheet span:nth-child(4n){border-right:0}.sheet span:nth-child(n+5){border-bottom:0}
+.map-1 b,.book-pair b{font:normal 32px/1 Georgia,serif}.map-1 span:nth-child(-n+4) b{transform:rotate(180deg)}
+.map-1 span:last-child,.book-pair b:last-child{background:var(--ink);color:var(--paper)}
+.map-3:after{content:"";position:absolute;top:calc(50% - 2px);left:25%;width:50%;height:4px;background:var(--rust)}
+.book-pair{display:flex;width:53%;aspect-ratio:1.5;align-items:stretch;background:var(--paper);border:1.5px solid var(--ink)}
+.book-pair b{flex:1;display:grid;place-items:center;font-size:40px}.book-pair b+b{border-left:2px solid var(--ink)}
+figcaption{color:#445548;font:13px/1.45 Arial,sans-serif;padding:8px 0 0}
+.copy{font-size:18px;line-height:1.52}.copy p{margin:0 0 .65em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@media(max-width:624px){.page{padding:26px clamp(19px,6vw,40px) 34px;min-height:0}.page h2{font-size:clamp(36px,9.4vw,54px);margin-top:24px}.lead{font-size:19px}.copy{font-size:17px}.controls{font-size:14px}.drawing{padding:16px 0}.sheet{width:78%}.map-1 b{font-size:24px}.folio{font-size:11px}}
+@page{size:148mm 210mm;margin:0}
+@media print{
+ html,body{background:white}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .controls,.sr{display:none!important}
+ .page,.ready .page:not(.current){display:block;width:148mm;height:209.8mm;min-height:0;margin:0;border:0;box-shadow:none;padding:12mm 14mm 10mm;break-after:page}
+ .page:last-child{break-after:auto}.folio{font-size:8.3pt;padding-bottom:3mm}.page h2{font-size:31pt;line-height:1.03;margin:7mm 0 3mm}.page-1 h2{font-size:37pt;max-width:95mm}
+ .lead{font-size:13.4pt;line-height:1.29}.drawing{padding:4mm 0}.sheet{width:55%}.book-pair{width:49%;aspect-ratio:1.414}.map-1 b{font-size:20pt}
+ figure{margin:5mm 0}.copy{font-size:11.1pt;line-height:1.43}figcaption{font-size:8.5pt;padding-top:2mm}
+}
+</style></head><body>
+<nav class="controls" aria-label="Lectura"><div class="pager"><button id="prev" type="button">Anterior</button><button id="next" type="button">Siguiente</button></div><a class="download" href="taller-de-papel.pdf" download>Descargar PDF</a></nav>
+<main><h1 class="sr">Taller de papel. Guía de lectura</h1>
+        <section class="page page-1" id="p1" aria-labelledby="title-1">
+          <header class="folio"><span>Taller de papel</span><span>01 / 04</span></header>
+          <h2 id="title-1">De un pliego a un libro</h2>
+          <p class="lead">Un cuadernillo de ocho páginas hecho con una sola hoja y un corte central.</p>
+          <figure><div class="drawing"><div class="sheet map-1" role="img" aria-label="Fila superior de izquierda a derecha, con los números girados: 5, 4, 3, 2. Fila inferior en sentido de lectura: 6, 7, 8, 1."><span><b>5</b></span><span><b>4</b></span><span><b>3</b></span><span><b>2</b></span><span><b>6</b></span><span><b>7</b></span><span><b>8</b></span><span><b>1</b></span></div></div><figcaption>El pliego abierto. La portada ocupa la esquina inferior derecha.</figcaption></figure>
+          <div class="copy"><p>¿Por qué la página 2 se imprime boca abajo? Porque en un libro de una sola hoja las páginas se encuentran al doblar el papel. Esta maqueta permite comprobar el orden antes de imprimir una tirada.</p><p>Necesitarás una hoja A4, un lápiz y unas tijeras. Haz la primera prueba con papel usado que tenga una cara en blanco.</p></div>
+        </section>
+        <section class="page page-2" id="p2" aria-labelledby="title-2">
+          <header class="folio"><span>Taller de papel</span><span>02 / 04</span></header>
+          <h2 id="title-2">Marca ocho paneles</h2>
+          <p class="lead">Los pliegues son las guías de montaje. Conviene marcarlos antes de escribir.</p>
+          <figure><div class="drawing"><div class="sheet map-2" role="img" aria-label="Hoja horizontal dividida en dos filas y cuatro columnas."><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span></div></div><figcaption>Tres líneas verticales y una horizontal delimitan ocho paneles iguales.</figcaption></figure>
+          <div class="copy"><p>Coloca la hoja apaisada. Junta el borde superior con el inferior, marca la línea y vuelve a abrir. Ahora junta los dos bordes cortos, marca el centro y abre de nuevo.</p><p>Lleva cada borde corto hasta el centro y deshaz los dos dobleces. Al alisar la hoja deben verse dos filas de cuatro rectángulos.</p></div>
+        </section>
+        <section class="page page-3" id="p3" aria-labelledby="title-3">
+          <header class="folio"><span>Taller de papel</span><span>03 / 04</span></header>
+          <h2 id="title-3">Abre la ranura central</h2>
+          <p class="lead">Un solo corte permite que las cuatro hojas del cuadernillo giren alrededor del mismo lomo.</p>
+          <figure><div class="drawing"><div class="sheet map-3" role="img" aria-label="El corte sigue el pliegue horizontal desde un cuarto hasta tres cuartos de la anchura de la hoja."><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span><span><b></b></span></div></div><figcaption>La línea roja continua marca el corte. Los extremos del pliego quedan unidos.</figcaption></figure>
+          <div class="copy"><p>Vuelve a juntar los bordes cortos. Desde el borde doblado, corta sobre el pliegue horizontal hasta la primera línea vertical. Detente allí. Al desplegar la hoja, la ranura cruzará solo los dos paneles centrales.</p><p>Dobla la hoja a lo largo con las marcas hacia fuera. Empuja los extremos cortos uno hacia el otro. La ranura se abrirá en forma de rombo y luego se cerrará en una cruz.</p></div>
+        </section>
+        <section class="page page-4" id="p4" aria-labelledby="title-4">
+          <header class="folio"><span>Taller de papel</span><span>04 / 04</span></header>
+          <h2 id="title-4">Comprueba la lectura</h2>
+          <p class="lead">Una maqueta numerada evita que una tirada entera salga en el orden equivocado.</p>
+          <figure><div class="drawing"><div class="book-pair" role="img" aria-label="La contraportada 8 a la izquierda y la portada 1 a la derecha."><b>8</b><b>1</b></div></div><figcaption>En el libro cerrado, el 8 es la contraportada y el 1 es la portada.</figcaption></figure>
+          <div class="copy"><p>Pliega los cuatro brazos de la cruz como las hojas de un libro. Escoge la portada y escribe un 1. Pasa las páginas y numéralas hasta llegar al 8 en la contraportada. Añade una flecha hacia arriba en cada una.</p><p>Abre el pliego sin borrar nada. Ya tienes una guía para colocar tu texto e imágenes. Antes de hacer copias, dobla una prueba impresa: las ocho flechas deben apuntar hacia arriba al pasar las páginas.</p></div>
+        </section></main><div class="sr" role="status" aria-live="polite" id="status"></div>
+<script>
+const pages = Array.from(document.querySelectorAll(".page"));
+const prev = document.getElementById("prev"), next = document.getElementById("next");
+let active;
+function selectPage(){
+  active = Math.max(0, pages.findIndex(page => "#" + page.id === location.hash));
+  pages.forEach((page,index) => page.classList.toggle("current",index === active));
+  prev.disabled = active === 0; next.disabled = active === pages.length - 1;
+  document.getElementById("status").textContent = "Página " + (active + 1) + " de " + pages.length;
+}
+function go(index){
+  if(index < 0 || index >= pages.length || index === active) return;
+  history.pushState(null,"","#" + pages[index].id); selectPage(); window.scrollTo(0,0);
+}
+prev.addEventListener("click",() => go(active - 1)); next.addEventListener("click",() => go(active + 1));
+window.addEventListener("popstate",selectPage);window.addEventListener("hashchange",selectPage);
+document.addEventListener("keydown",event => {
+  if(event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  const targets = {ArrowLeft: active - 1, ArrowRight: active + 1, Home: 0, End: pages.length - 1};
+  if(Object.hasOwn(targets,event.key)){event.preventDefault();go(targets[event.key]);}
+});
+selectPage();document.documentElement.classList.add("ready");
+</script></body></html>
