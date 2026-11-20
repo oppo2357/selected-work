@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ee">
+  <meta name="description" content="An original courier van photographed in two enamel finishes and matching camera views. Blender and Cycles.">
+  <link rel="icon" href="data:,">
+  <title>Courier van · Studio paint study</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+<main>
+  <header>
+    <div><a href="../../">oppo2357 / Selected work</a><h1>Courier van</h1></div>
+    <p>An original vehicle model in two enamel finishes, photographed with a fixed studio rig in Blender Cycles.</p>
+  </header>
+  <figure>
+    <a id="full" href="marigold-front.webp" aria-label="Open the displayed render at full size"><img id="photo" src="marigold-front.webp" width="1440" height="900" alt="Marigold courier van with an ivory roof, front three-quarter view."></a>
+    <figcaption>
+      <fieldset><legend>Body paint</legend>
+        <label><input type="radio" name="paint" value="marigold" checked><span class="swatch gold"></span>Marigold</label>
+        <label><input type="radio" name="paint" value="harbour"><span class="swatch blue"></span>Harbour blue</label>
+      </fieldset>
+      <fieldset><legend>Camera</legend>
+        <label><input type="radio" name="view" value="front" checked>Front</label>
+        <label><input type="radio" name="view" value="rear">Rear</label>
+      </fieldset>
+    </figcaption>
+  </figure>
+  <section aria-labelledby="detail-title">
+    <div><h2 id="detail-title">Exterior detail</h2><p>Fluted headlamp lenses, a recessed bonnet seam and stamped steel wheels. The ivory roof and trim keep their materials in both paint variants.</p></div>
+    <a href="detail.webp" aria-label="Open the headlamp and wheel detail at full size"><img src="detail.webp" width="1250" height="850" alt="Close view of the front lamp, bonnet and stamped steel front wheel." loading="lazy"></a>
+  </section>
+  <footer>Independent Blender study · Model, materials and studio lighting by oppo2357 using an AI-assisted workflow.</footer>
+</main>
+<script>
+  const picture = document.getElementById('photo');
+  const full = document.getElementById('full');
+  function showSelection() {
+    const paint = document.querySelector('input[name=paint]:checked').value;
+    const view = document.querySelector('input[name=view]:checked').value;
+    const finish = paint === 'marigold' ? 'Marigold' : 'Harbour blue';
+    const file = paint + '-' + view + '.webp';
+    picture.alt = finish + ' courier van with an ivory roof, ' + view + ' three-quarter view.';
+    picture.src = file;
+    full.href = file;
+  }
+  document.querySelector('figcaption').addEventListener('change', showSelection);
+  window.addEventListener('pageshow', showSelection);
+</script>
+</body>
+</html>
