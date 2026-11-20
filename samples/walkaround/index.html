@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="walk.css">
+  <title>Vehicle walkaround · Courier van inspection</title>
+  <script defer src="playcanvas-2.24.2.min.js"></script>
+  <script defer src="walk.js"></script>
+</head>
+<body>
+  <main>
+    <header><h1>Vehicle walkaround</h1><p>Inspect the courier van and record the condition of each part.</p></header>
+    <div class="layout">
+      <section aria-label="Interactive van model">
+        <div class="stage">
+          <canvas id="vehicle" tabindex="0" aria-label="3D courier van. Drag or use the arrow keys to orbit. Use the part menu to select any part."></canvas>
+          <div class="stage-tools" aria-label="Camera controls"><button id="front">Front</button><button id="rear">Rear</button><button id="reset-view">Reset view</button></div>
+          <p id="model-status" role="status">Loading vehicle…</p>
+        </div>
+        <p class="caption">Drag to rotate · Select a part on the van or use the menu.</p>
+      </section>
+      <section class="sheet" aria-label="Vehicle inspection sheet">
+        <h2>Inspection sheet</h2><p id="progress" aria-live="polite"></p><progress id="meter" max="11" value="0" aria-label="Parts recorded"></progress>
+        <label for="part">Vehicle part</label><select id="part"></select>
+        <fieldset><legend>Condition</legend>
+          <button type="button" data-condition="ok" aria-pressed="false">OK</button>
+          <button type="button" data-condition="attention" aria-pressed="false">Needs attention</button>
+        </fieldset>
+        <label for="note">Inspection note</label>
+        <textarea rows="3" id="note" maxlength="600" placeholder="Add an observation"></textarea>
+        <button id="clear" class="text-button">Clear this part</button>
+        <div class="out"><button id="export">Export inspection</button><small id="storage" role="status">Saved in this browser.</small></div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
