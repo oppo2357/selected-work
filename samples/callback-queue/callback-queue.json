@@ -1,0 +1,235 @@
+{
+  "id": "callbackQueueDemo1",
+  "name": "Callback queue from a call export",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "57ee0bb7-2e85-5e2e-959b-8fea11595796",
+      "name": "Run demo",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"events\": [\n    {\n      \"callId\": \"JOB-31\",\n      \"revision\": 1,\n      \"outcome\": \"missed\",\n      \"callbackRequested\": true,\n      \"customer\": \"site A\",\n      \"request\": \"boiler visit\"\n    },\n    {\n      \"callId\": \"JOB-34\",\n      \"revision\": 2,\n      \"outcome\": \"answered\",\n      \"callbackRequested\": true,\n      \"customer\": \"site B\",\n      \"request\": \"filter delivery\"\n    },\n    {\n      \"callId\": \"JOB-31\",\n      \"revision\": 1,\n      \"outcome\": \"missed\",\n      \"callbackRequested\": true,\n      \"customer\": \"site A\",\n      \"request\": \"boiler visit\"\n    },\n    {\n      \"callId\": \"JOB-48\",\n      \"revision\": 1,\n      \"outcome\": \"voicemail\",\n      \"callbackRequested\": true,\n      \"customer\": \"site A\",\n      \"request\": \"second property visit\"\n    },\n    {\n      \"callId\": \"JOB-57\",\n      \"revision\": 1,\n      \"outcome\": \"missed\",\n      \"callbackRequested\": false,\n      \"customer\": \"site C\",\n      \"request\": \"service quote\"\n    },\n    {\n      \"callId\": \"JOB-34\",\n      \"revision\": 1,\n      \"outcome\": \"missed\",\n      \"callbackRequested\": true,\n      \"customer\": \"site B\",\n      \"request\": \"filter delivery\"\n    },\n    {\n      \"callId\": \"JOB-63\",\n      \"revision\": 2,\n      \"outcome\": \"callback_done\",\n      \"callbackRequested\": true,\n      \"customer\": \"site D\",\n      \"request\": \"meter exchange\"\n    },\n    {\n      \"callId\": \"JOB-63\",\n      \"revision\": 1,\n      \"outcome\": \"voicemail\",\n      \"callbackRequested\": true,\n      \"customer\": \"site D\",\n      \"request\": \"meter exchange\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "c958d938-0250-5dc3-b778-14a6b26db3cd",
+      "name": "Eight call updates",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "events",
+        "options": {}
+      },
+      "id": "57c16fb6-b5cb-5968-915a-f1d5034cbe52",
+      "name": "One item per update",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        640,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "type": "simple",
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "revision",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cb6e50d8-5db0-5a01-bada-34a1eac474a1",
+      "name": "Newest revision first",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        860,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "removeDuplicateInputItems",
+        "compare": "selectedFields",
+        "fieldsToCompare": "callId",
+        "options": {}
+      },
+      "id": "53744c8b-b517-56eb-adaa-7b1f7e1a8257",
+      "name": "Latest state per call",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4b72a5cc-e0bd-5b9a-96fe-e67a4aa06c2c",
+              "leftValue": "={{ $json.callbackRequested }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "22216839-fde5-59ad-920d-ccca5bf79980",
+              "leftValue": "={{ $json.outcome }}",
+              "rightValue": "^(missed|voicemail)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7dc20d6b-784c-5962-a5ae-09112be6e0b7",
+      "name": "Requested and still open",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "986cd9b9-a389-5de9-b3b6-8c249ec8bbc8",
+              "name": "callId",
+              "value": "={{ $json.callId }}",
+              "type": "string"
+            },
+            {
+              "id": "b5b57c10-09b6-5e55-abd1-9e99b85908e4",
+              "name": "customer",
+              "value": "={{ $json.customer }}",
+              "type": "string"
+            },
+            {
+              "id": "534b6cea-0015-5297-afc9-4a2bf4b47953",
+              "name": "reason",
+              "value": "={{ $json.request }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8293aa23-d35e-558b-ba0c-319e8b1baedb",
+      "name": "Owner callback list",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1520,
+        260
+      ]
+    }
+  ],
+  "connections": {
+    "Run demo": {
+      "main": [
+        [
+          {
+            "node": "Eight call updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eight call updates": {
+      "main": [
+        [
+          {
+            "node": "One item per update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per update": {
+      "main": [
+        [
+          {
+            "node": "Newest revision first",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Newest revision first": {
+      "main": [
+        [
+          {
+            "node": "Latest state per call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Latest state per call": {
+      "main": [
+        [
+          {
+            "node": "Requested and still open",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Requested and still open": {
+      "main": [
+        [
+          {
+            "node": "Owner callback list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
