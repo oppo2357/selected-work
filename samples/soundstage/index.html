@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f4efe3"><title>Same Door, Different World</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:#20352c;background:#f4efe3;font:17px/1.45 system-ui,sans-serif}
+main{max-width:900px;margin:0 auto;padding:clamp(22px,5vw,65px) 20px}h1{font:normal clamp(34px,6vw,65px)/1.05 Georgia,serif;letter-spacing:-.04em;margin:0 0 10px}
+p{margin:.4em 0 1.05em}video{display:block;width:100%;aspect-ratio:16/9;background:#19342c;border-radius:3px}
+.controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin:14px 0 20px}
+button{font:inherit;cursor:pointer;border:1px solid #94a093;background:transparent;color:#243e34;padding:.55em 1em;border-radius:3px;min-height:44px}
+button[aria-pressed=true],#play{color:#fff;background:#234c3e;border-color:#234c3e}button:focus-visible,summary:focus-visible{outline:3px solid #b65623;outline-offset:3px}
+#play{margin-right:.5em;min-width:6em}#timer{font-variant-numeric:tabular-nums;margin-left:auto;font-size:.9em}
+details{border-top:1px solid #b4bcae;padding-top:14px}summary{cursor:pointer;width:fit-content}small{color:#506258}
+@media(max-width:430px){.controls{gap:.35em}button{padding:.45em .62em}#play{min-width:4.5em;margin-right:0}#timer{font-size:.8em}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Same Door, Different World</h1>
+  <p>What is on the other side? Play the shot, then switch soundtracks while the door is open.</p>
+  <video id="picture" muted playsinline preload="auto" poster="closed.png" src="picture.mp4" aria-label="A green door opens onto a dark gap, then shuts."></video>
+  <div class="controls">
+    <button id="play" type="button">Play</button>
+    <button id="trackX" type="button" aria-pressed="true">Track X</button>
+    <button id="trackY" type="button" aria-pressed="false">Track Y</button>
+    <span id="timer">0:00 / 0:08</span>
+  </div>
+  <p id="status" role="status"></p>
+  <details><summary>Reveal the two rooms</summary>
+    <p id="key"></p><p>At 1.5 seconds the same brass latch clicks. As the door swings open the high frequencies arrive. When it shuts at 6.4 seconds the sound loses its edges again.</p>
+    <small>Original Blender scene and synthesized stereo sound by oppo2357, made with AI assistance. No library recordings.</small>
+  </details>
+</main>
+<script>
+const picture=document.getElementById('picture'),play=document.getElementById('play');
+const keys=['X','Y'], buttons=keys.map(k=>document.getElementById('track'+k));
+const order=crypto.getRandomValues(new Uint8Array(1))[0]%2?['A','B']:['B','A'];
+const rooms={A:'a theatre at curtain call',B:'a night railway platform'};
+document.getElementById('key').textContent=keys.map((k,i)=>'Track '+k+' opens onto '+rooms[order[i]]+'.').join(' ');
+let ctx,loading,gains=[],sources=[],selected=0,starting=false;
+const AudioEngine=window.AudioContext||window.webkitAudioContext;
+let changing=false;
+const nativeMix=name=>name+'-picture.mp4';
+if(!AudioEngine){picture.muted=false;picture.src=nativeMix(order[0])}
+function stopSound(){for(const source of sources){try{source.stop()}catch{}}sources=[]}
+async function ready(){
+  if(!ctx){ctx=new AudioEngine();gains=keys.map((_,i)=>{const g=ctx.createGain();g.gain.value=Number(i===selected);g.connect(ctx.destination);return g})}
+  await ctx.resume();
+  if(!loading){loading=Promise.all(order.map(async name=>{
+    const response=await fetch(name+'.mp3');if(!response.ok)throw Error('Audio unavailable');
+    return ctx.decodeAudioData(await response.arrayBuffer());
+  })).catch(error=>{loading=null;throw error})}
+  return loading;
+}
+function sync(buffers){
+  stopSound();
+  sources=buffers.map((buffer,i)=>{const s=ctx.createBufferSource();s.buffer=buffer;s.connect(gains[i]);
+    s.start(ctx.currentTime,Math.min(picture.currentTime,buffer.duration-.002));return s});
+}
+buttons.forEach((button,i)=>button.onclick=async()=>{
+  if(changing||i===selected)return;
+  selected=i;buttons.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===i)));
+  if(!AudioEngine){
+    changing=true;
+    const at=picture.currentTime,resume=!picture.paused&&!picture.ended;
+    try{
+      const loaded=new Promise((resolve,reject)=>{
+        const cleanup=()=>{picture.removeEventListener('loadedmetadata',ok);picture.removeEventListener('error',bad)};
+        const ok=()=>{cleanup();resolve()},bad=()=>{cleanup();reject(Error('Video unavailable'))};
+        picture.addEventListener('loadedmetadata',ok);picture.addEventListener('error',bad);
+      });
+      picture.src=nativeMix(order[i]);picture.load();await loaded;
+      if(at>0){
+        const seeked=new Promise(resolve=>picture.addEventListener('seeked',resolve,{once:true}));
+        picture.currentTime=at;await seeked;
+      }
+      if(resume)await picture.play();
+    }catch(error){document.getElementById('status').textContent='The other soundtrack could not be loaded. Please retry playback.'}
+    finally{changing=false}
+    return;
+  }
+  if(ctx)gains.forEach((g,j)=>g.gain.setTargetAtTime(Number(j===i),ctx.currentTime,.009));
+});
+play.onclick=async()=>{
+  if(starting||changing)return;
+  if(!picture.paused&&!picture.ended){picture.pause();return}
+  try{
+    starting=true;play.textContent='Loading…';document.getElementById('status').textContent='';
+    if(AudioEngine)await ready();if(picture.ended)picture.currentTime=0;
+    await picture.play();
+  }catch(error){picture.pause();play.textContent='Retry';document.getElementById('status').textContent='Playback could not start. Please try again.'}
+  finally{starting=false}
+};
+picture.onplaying=async()=>{if(!picture.paused){if(AudioEngine){const buffers=await loading;if(!picture.paused)sync(buffers)}play.textContent='Pause'}};
+picture.onwaiting=stopSound;
+picture.onpause=()=>{stopSound();play.textContent=picture.ended?'Replay':'Play'};
+picture.onended=()=>{stopSound();play.textContent='Replay'};
+picture.ontimeupdate=()=>document.getElementById('timer').textContent='0:0'+Math.min(8,Math.floor(picture.currentTime))+' / 0:08';
+</script>
+</body>
+</html>
