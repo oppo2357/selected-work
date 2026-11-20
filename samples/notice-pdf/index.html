@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Room key pickup notice | Tagged PDF work sample</title>
+  <style>
+    html { background: #fbfcfa; color: #173039; font: 1.1rem/1.6 system-ui, sans-serif; }
+    body { max-width: 40rem; margin: auto; padding: clamp(1.25rem, 5vw, 4rem) 1.25rem; }
+    h1, h2 { line-height: 1.16; color: #173f48; }
+    h1 { font-size: clamp(2rem, 6vw, 3rem); max-width: 19ch; margin-bottom: .5rem; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    a { color: #125864; text-underline-offset: .15em; }
+    a:focus-visible { outline: 3px solid #8e4c0b; outline-offset: 3px; }
+    li { margin-block: .35rem; }
+    footer { border-top: 1px solid #bad0cb; margin-top: 2.5rem; padding-top: .75rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Room key pickup notice</h1>
+    <p>An independently written, one-page notice for a fictional community centre. A reader needs to find the right pickup desk and entrance for a given booking time.</p>
+    <p><strong><a href="tagged.pdf">Open the tagged notice (PDF)</a></strong><br>
+      <a href="original.pdf">Compare the untagged version (PDF)</a></p>
+    <h2>Reading the schedule</h2>
+    <p>Both files were exported from the same editable source. In the tagged file, one main heading and three section headings let readers navigate the notice. The three column headings identify the booking time, pickup desk and entrance. The nine data cells follow the printed schedule row by row.</p>
+    <h2>Verification</h2>
+    <ul>
+      <li>The veraPDF 1.30.4 PDF/UA-1 automated profile recorded 51 failed checks for the untagged file and zero for the tagged file. <a href="validation.xml">Download the validator report (XML)</a>.</li>
+      <li>Inspection of the tag tree and its text confirmed the heading order, the column scope of all three headers and the sequence of desk instructions after the table.</li>
+      <li>Text extraction and a pixel comparison of the rendered pages matched across both files. The tagged page was also inspected visually.</li>
+    </ul>
+    <p>The sample covers a text notice with a regular table. A human screen-reader walkthrough and agency acceptance review are outside the scope of this demonstration.</p>
+  </main>
+  <footer>Independent work sample by Oppo2357.</footer>
+</body>
+</html>
