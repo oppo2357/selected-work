@@ -1,0 +1,99 @@
+{
+  "target_noncached_tokens": 332,
+  "budget_seconds": 4,
+  "required_prefill_tps": 83.0,
+  "original_assumed_prefill_tps": 85.0,
+  "published_projected_median_s": 3.91,
+  "source_analysis": "https://raw.githubusercontent.com/r4topunk/boar-research/6b7caca9bd932d69859d0cc10f97fd9aecff4ce9/rnd/research/coordinator/arms/gate-latency/analysis.json",
+  "seeds": {
+    "42": {
+      "source": "https://huggingface.co/datasets/r4topunk/boar-traces/resolve/f96e277cf8584b38c35c01106c1fe77457dfaa81/rnd/research/coordinator/arms/device-final/out/df-m1-v04-s42.jsonl",
+      "sha256": "97fbbb4d8079302e7312f8e63652d2f86ad49356abe9bdeacf2e45d0107ec0df",
+      "all_model_turns": {
+        "turns": 82,
+        "median_observed_prefill_tps": 60.942,
+        "median_measured_prompt_tokens": 445.0,
+        "median_measured_prompt_seconds": 8.117,
+        "measured_prompt_times_at_or_below_budget": 6,
+        "median_seconds_if_target_tokens": 5.448,
+        "rates_sufficient_for_target_within_budget": 1,
+        "median_token_capacity_at_budget": 243.8
+      },
+      "cache_warm_first_turns": {
+        "turns": 68,
+        "median_observed_prefill_tps": 60.636,
+        "median_measured_prompt_tokens": 439.0,
+        "median_measured_prompt_seconds": 8.396,
+        "measured_prompt_times_at_or_below_budget": 4,
+        "median_seconds_if_target_tokens": 5.475,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 242.5
+      },
+      "within_10pct_tokens": {
+        "turns": 11,
+        "median_observed_prefill_tps": 53.144,
+        "median_measured_prompt_tokens": 337,
+        "median_measured_prompt_seconds": 6.699,
+        "measured_prompt_times_at_or_below_budget": 0,
+        "median_seconds_if_target_tokens": 6.247,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 212.6
+      },
+      "within_25pct_tokens": {
+        "turns": 24,
+        "median_observed_prefill_tps": 61.176,
+        "median_measured_prompt_tokens": 346.5,
+        "median_measured_prompt_seconds": 6.235,
+        "measured_prompt_times_at_or_below_budget": 1,
+        "median_seconds_if_target_tokens": 5.429,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 244.7
+      }
+    },
+    "43": {
+      "source": "https://huggingface.co/datasets/r4topunk/boar-traces/resolve/f96e277cf8584b38c35c01106c1fe77457dfaa81/rnd/research/coordinator/arms/device-final/out/df-m1-v04-s43.jsonl",
+      "sha256": "a9ffb0013b1edb6e6763bc52da9e4d98b8fb62e68c1974d616aa3bc7f74ee311",
+      "all_model_turns": {
+        "turns": 82,
+        "median_observed_prefill_tps": 40.295,
+        "median_measured_prompt_tokens": 439.0,
+        "median_measured_prompt_seconds": 10.22,
+        "measured_prompt_times_at_or_below_budget": 7,
+        "median_seconds_if_target_tokens": 8.239,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 161.2
+      },
+      "cache_warm_first_turns": {
+        "turns": 69,
+        "median_observed_prefill_tps": 40.932,
+        "median_measured_prompt_tokens": 438,
+        "median_measured_prompt_seconds": 9.959,
+        "measured_prompt_times_at_or_below_budget": 6,
+        "median_seconds_if_target_tokens": 8.111,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 163.7
+      },
+      "within_10pct_tokens": {
+        "turns": 11,
+        "median_observed_prefill_tps": 40.447,
+        "median_measured_prompt_tokens": 341,
+        "median_measured_prompt_seconds": 7.739,
+        "measured_prompt_times_at_or_below_budget": 0,
+        "median_seconds_if_target_tokens": 8.208,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 161.8
+      },
+      "within_25pct_tokens": {
+        "turns": 25,
+        "median_observed_prefill_tps": 40.447,
+        "median_measured_prompt_tokens": 343,
+        "median_measured_prompt_seconds": 7.739,
+        "measured_prompt_times_at_or_below_budget": 0,
+        "median_seconds_if_target_tokens": 8.208,
+        "rates_sufficient_for_target_within_budget": 0,
+        "median_token_capacity_at_budget": 161.8
+      }
+    }
+  },
+  "matched_model_turn_ids": 82
+}
