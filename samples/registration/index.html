@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f3ec">
+<link rel="icon" href="data:,">
+<title>Landmark registration · Mesh study</title>
+<link rel="stylesheet" href="./study.css">
+<script type="importmap">{"imports":{"three":"../miyajima/three.module.min.js"}}</script>
+<main>
+  <header><div><p class="kicker">Geometry study</p><h1>Landmark registration</h1></div><p class="intro">Fit two poses of a synthetic three-crown segment. Three landmarks drive the fit. Every surface vertex checks the result.</p></header>
+  <div class="bench">
+    <section class="viewer" aria-label="Interactive mesh viewer">
+      <div class="legend"><span class="scan">Moving mesh</span><span class="reference">Reference contours</span></div>
+      <canvas tabindex="0" aria-label="Three synthetic crowns. Drag to orbit the models or use the view buttons below."></canvas>
+      <p id="fallback" hidden>The 3D view needs WebGL. The alignment controls and measurements still work.</p>
+      <div class="camera"><button id="oblique" aria-pressed="true">Oblique</button><button id="top" aria-pressed="false">Top</button></div>
+    </section>
+    <section class="panel" aria-label="Registration controls">
+      <div class="metric"><h2>Surface RMS error</h2><p><output id="rms">—</output> <small>mm</small></p><div id="count"></div></div>
+      <fieldset><legend>Landmark placement</legend><label><input type="radio" name="mode" value="exact" checked> Exact pairs</label><label><input type="radio" name="mode" value="offset"> Offset one pick by 0.5 mm</label></fieldset>
+      <div class="mix"><label for="mix">Pose interpolation</label><output for="mix" id="percent">0%</output><input id="mix" type="range" min="0" max="100" value="0"><div class="ends"><span>Initial</span><span>Fitted</span></div></div>
+      <div class="actions"><button id="apply">Apply fit</button><button id="reset">Reset pose</button></div>
+      <p id="summary" aria-live="polite"></p>
+    </section>
+  </div>
+  <footer><span>Three-point rigid registration · synthetic geometry in millimetres</span><span>Drag to orbit · scroll or pinch to zoom</span></footer>
+</main>
+<script type="module" src="./study.js"></script>
+</html>
