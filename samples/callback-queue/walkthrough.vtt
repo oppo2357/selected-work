@@ -1,0 +1,48 @@
+WEBVTT
+
+00:02.000 --> 00:11.200
+Which jobs still need a phone call after
+the office imports its latest call export?
+
+00:16.000 --> 00:23.000
+Eight updates produce two callbacks for site A.
+JOB-31 is a boiler visit.
+
+00:23.000 --> 00:29.800
+JOB-48 concerns a second property. Grouping by
+customer would lose one of the two callbacks.
+
+00:33.000 --> 00:40.000
+JOB-34 was answered at revision two.
+An earlier missed-call update arrived later.
+
+00:40.000 --> 00:47.600
+Taking the last arrival would trigger an unnecessary
+callback. Sort by source revision first.
+
+00:54.000 --> 01:00.000
+Keep the latest state for each call ID.
+Eight updates describe five jobs.
+
+01:00.000 --> 01:05.500
+Only then filter for requested, open callbacks.
+That keeps the stale missed call off the list.
+
+01:08.000 --> 01:14.900
+Replay all eight updates twice.
+Sixteen records enter the workflow.
+
+01:19.000 --> 01:29.200
+The dispatcher still sees the same two job IDs.
+Repeated imports should not duplicate callbacks.
+
+01:36.000 --> 01:42.000
+A newer record marks the boiler visit complete.
+Only JOB-48 remains.
+
+01:42.000 --> 01:46.900
+The other visit for this customer is still open.
+
+01:48.500 --> 01:58.900
+Remove one call ID and the execution stops at
+Latest state per call, before it can produce a partial list.
