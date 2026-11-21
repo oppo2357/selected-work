@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The missing remote · Yofune Press</title>
+<style>
+* { box-sizing: border-box }
+body { margin: 0; background: #f7f4ec; color: #202f32; font: 1.05rem/1.55 system-ui,sans-serif }
+main { max-width: 44rem; padding: clamp(2rem,7vw,4rem) 1.5rem; margin: auto }
+h1 { font: 500 clamp(2.8rem,8vw,4.5rem)/1.05 Georgia,serif; margin: 0 0 1rem }
+fieldset { display:flex; flex-wrap:wrap; gap:1.1rem; margin:1.5rem 0 .8rem; padding:1rem; border:1px solid #879798; border-radius:.5rem }
+label,input { cursor:pointer } input { accent-color:#175952 }
+audio { width:100% } footer { margin-top:2.2rem; font-size:.88rem } a { color:#145850 }
+</style>
+<main>
+<h1>The missing remote</h1>
+<p>Four microphones, one design meeting. Listen from 0:13 as the quieter speaker explains how the remote ends up behind the couch. Switch mixes mid-sentence to compare at the same playback position.</p>
+<fieldset><legend>Dialogue mix</legend>
+<label><input type="radio" name="mix" value="edit.wav" checked> Edited</label>
+<label><input type="radio" name="mix" value="reference.wav"> Original reference</label>
+</fieldset>
+<audio controls preload="auto" src="edit.wav"></audio>
+<p>Both mixes run 31 seconds at −23.4 LUFS. The edit adjusts individual microphones through speaker changes and overlapping responses.</p>
+<footer>Independent editing study by Yofune Press. Audio and word timings from the <a href="https://groups.inf.ed.ac.uk/ami/download/">AMI Meeting Corpus</a>, ES2002a, 14:52–15:23. Excerpted, filtered and rebalanced under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Download the <a href="reference.wav">reference</a> or <a href="edit.wav">edit</a>.</footer>
+</main>
+<script>
+const player = document.querySelector('audio');
+let switching = false;
+let position = 0;
+let resume = false;
+for (const input of document.querySelectorAll('input[name=mix]')) {
+  input.addEventListener('change', () => {
+    if (!switching) {
+      position = player.ended ? 0 : player.currentTime;
+      resume = !player.paused;
+    }
+    switching = true;
+    player.src = input.value;
+  });
+}
+player.addEventListener('loadedmetadata', () => {
+  if (!switching) return;
+  switching = false;
+  player.currentTime = Math.min(position, player.duration);
+  if (resume) player.play().catch(() => {});
+});
+</script>
+</html>
