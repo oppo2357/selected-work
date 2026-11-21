@@ -19,12 +19,19 @@ nav{display:flex;flex-wrap:wrap;gap:6px}button{background:transparent;border:1px
 button[aria-pressed=true]{background:#23453f;color:#fff;border-color:#23453f}button:focus-visible,a:focus-visible{outline:3px solid #bf552e;outline-offset:2px}
 .detail{max-width:37em}footer{border-top:1px solid #c3c8b9;color:#455d54;padding:10px 0 16px;font-size:12px;line-height:1.55}a{color:inherit}
 @media(max-width:700px){header{padding-top:18px}#view{height:57svh;min-height:325px}header p{font-size:12px}button{padding:8px 10px}.toolbar{gap:9px}.detail{font-size:13px}}
+#poster{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#d0d8d3}
+#view:has(canvas[data-settled]) #poster{display:none}
+#view:not(:has(canvas[data-settled])) + .toolbar{display:none}
+#view:not(:has(canvas[data-settled])) canvas{visibility:hidden}
+#status{inset:auto 0 0;margin:0}
+#status:empty{display:none}
 </style>
 <main>
 <header><h1>Miyajima <small lang="ja">宮島</small></h1><p>Seto Inland Sea<br>Hiroshima, Japan</p></header>
 <section id="view" aria-label="Interactive three-dimensional coastal landscape">
+<img id="poster" src="./torii-preview.jpg" alt="The vermilion Great Torii reflected in the water, with the shrine and wooded mountains behind it.">
 <canvas aria-label="Drag to orbit the terrain. Use the buttons below to explore specific landmarks." tabindex="0"></canvas>
-<div id="status" role="status">Loading the island…</div></section>
+<div id="status" role="status"></div></section>
 <div class="toolbar"><nav aria-label="Landmark views">
 <button type="button" data-view="gate" aria-pressed="true">Great Torii</button>
 <button type="button" data-view="tablet" aria-pressed="false">Inscription</button>
