@@ -6,6 +6,11 @@ a{color:inherit}
 .page{max-width:1520px;margin:0 auto;padding:0 clamp(20px,5vw,78px)}
 header{height:76px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between}
 header a{text-decoration:none}
+.research-sample { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px 24px; padding:18px 0; margin-bottom:18px; border-block:1px solid var(--rule); }
+.research-sample h2 { font-size:18px; }
+.research-sample p { margin-top:4px; font-size:14px; }
+.sample-links { display:flex; flex-wrap:wrap; gap:8px 20px; }
+.sample-links a { padding:5px 0; text-underline-offset:4px; }
 .brand{font-size:21px;font-weight:670;display:flex;align-items:center;gap:9px;letter-spacing:-1.1px}
 .brand i{display:inline-block;width:17px;height:17px;border-radius:100% 0 100% 100%;background:#5f6237;transform:rotate(-10deg)}
 .source{font-size:14px;font-weight:580}
