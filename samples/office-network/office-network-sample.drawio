@@ -1,0 +1,57 @@
+<mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="820" background="#F5F7F4">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="sample" value="納品見本　/　架空の事業所" style="text;html=0;align=left;fontSize=24;fontStyle=1;fontColor=#23655D;" vertex="1" parent="1">
+      <mxGeometry x="64" y="48" width="500" height="34" as="geometry"/>
+    </mxCell>
+    <mxCell id="title" value="小規模オフィスのネットワーク構成図" style="text;html=0;align=left;fontSize=46;fontStyle=1;fontColor=#172B2A;" vertex="1" parent="1">
+      <mxGeometry x="64" y="95" width="1260" height="66" as="geometry"/>
+    </mxCell>
+    <mxCell id="scope" value="本館1階　｜　有線接続の範囲　｜　機器名はサンプルです" style="text;html=0;align=left;fontSize=24;fontColor=#476460;" vertex="1" parent="1">
+      <mxGeometry x="64" y="176" width="1120" height="42" as="geometry"/>
+    </mxCell>
+    <mxCell id="internet" value="インターネット" style="rounded=1;whiteSpace=wrap;html=0;arcSize=12;fillColor=#DEE9E4;strokeColor=#72A098;strokeWidth=2;fontColor=#214C46;fontStyle=1;fontSize=24;" vertex="1" parent="1">
+      <mxGeometry x="68" y="393" width="215" height="94" as="geometry"/>
+    </mxCell>
+    <mxCell id="router" value="業務用ルーター&#xa;RT-01" style="rounded=1;whiteSpace=wrap;html=0;arcSize=12;fillColor=#174B47;strokeColor=#174B47;fontColor=#FFFFFF;fontStyle=1;fontSize=24;" vertex="1" parent="1">
+      <mxGeometry x="366" y="393" width="250" height="94" as="geometry"/>
+    </mxCell>
+    <mxCell id="switch" value="フロアスイッチ&#xa;SW-01" style="rounded=1;whiteSpace=wrap;html=0;arcSize=12;fillColor=#174B47;strokeColor=#174B47;fontColor=#FFFFFF;fontStyle=1;fontSize=24;" vertex="1" parent="1">
+      <mxGeometry x="706" y="393" width="260" height="94" as="geometry"/>
+    </mxCell>
+    <mxCell id="ap" value="無線アクセスポイント&#xa;AP-01" style="rounded=1;whiteSpace=wrap;html=0;arcSize=12;fillColor=#FCFCFC;strokeColor=#72A098;strokeWidth=2;fontColor=#214C46;fontStyle=1;fontSize=24;" vertex="1" parent="1">
+      <mxGeometry x="1100" y="235" width="292" height="86" as="geometry"/>
+    </mxCell>
+    <mxCell id="pc" value="受付パソコン&#xa;PC-01" style="rounded=1;whiteSpace=wrap;html=0;arcSize=12;fillColor=#FCFCFC;strokeColor=#72A098;strokeWidth=2;fontColor=#214C46;fontStyle=1;fontSize=24;" vertex="1" parent="1">
+      <mxGeometry x="1100" y="397" width="292" height="86" as="geometry"/>
+    </mxCell>
+    <mxCell id="printer" value="共有プリンター&#xa;PR-01" style="rounded=1;whiteSpace=wrap;html=0;arcSize=12;fillColor=#FCFCFC;strokeColor=#72A098;strokeWidth=2;fontColor=#214C46;fontStyle=1;fontSize=24;" vertex="1" parent="1">
+      <mxGeometry x="1100" y="559" width="292" height="86" as="geometry"/>
+    </mxCell>
+    <mxCell id="wan-link" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#437870;strokeWidth=3;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="internet" target="router">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="router-link" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#437870;strokeWidth=3;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="router" target="switch">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ap-link" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#437870;strokeWidth=3;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="switch" target="ap">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="pc-link" value="Port 2" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#437870;strokeWidth=3;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=19;fontColor=#476460;" edge="1" parent="1" source="switch" target="pc">
+      <mxGeometry relative="1" y="24" as="geometry"/>
+    </mxCell>
+    <mxCell id="printer-link" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#437870;strokeWidth=3;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="switch" target="printer">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="note-box" style="rounded=0;fillColor=#F1E8D3;strokeColor=none;" vertex="1" parent="1">
+      <mxGeometry x="62" y="678" width="1333" height="95" as="geometry"/>
+    </mxCell>
+    <mxCell id="note-title" value="引き継ぎ時の確認事項" style="text;html=0;align=left;fontSize=20;fontStyle=1;fontColor=#786224;" vertex="1" parent="1">
+      <mxGeometry x="86" y="690" width="620" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="note" value="SW-01 と AP-01 の接続は確認済み。SW-01 側のポート番号は、現地の配線表示で要確認。" style="text;html=0;align=left;fontSize=22;fontColor=#403B27;" vertex="1" parent="1">
+      <mxGeometry x="86" y="727" width="1280" height="32" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>
