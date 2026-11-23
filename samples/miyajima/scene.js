@@ -31,7 +31,7 @@ async function start(){
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
   const scene=new T.Scene();scene.background=new T.Color(0xc3ccc7);scene.fog=new T.FogExp2(0xb5c6c2,.00091);
   const light=new T.HemisphereLight(0xfff1d8,0xc1c8bf,1.68);scene.add(light);
-  const sun=new T.DirectionalLight(0xffe8ca,2.12);sun.position.set(-118,110,-82);sun.target.position.set(23,2,25);
+  const sun=new T.DirectionalLight(0xffe8ca,1.64);sun.position.set(-118,110,-82);sun.target.position.set(23,2,25);
   sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-163,right:163,top:145,bottom:-145,near:.5,far:435});sun.shadow.normalBias=.055;sun.shadow.bias=-.00018;scene.add(sun,sun.target);
   const camera=new T.PerspectiveCamera(38,1,.35,9500),controls=new OrbitControls(camera,canvas);
   controls.enableDamping=true;controls.enablePan=false;controls.minDistance=9;controls.maxDistance=650;controls.maxPolarAngle=Math.PI*.495;
@@ -48,6 +48,16 @@ async function start(){
   buildArchitecture(b,layout,ground,scene,textures.slice(5));b.flush();makeSky(scene);
   gate.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
   gate.scene.position.set(-85,0,-64);gate.scene.rotation.y=.80;scene.add(gate.scene);
+  // Share the sun's direction, with a smaller shadow frustum around the torii.
+  const gateSun=new T.DirectionalLight(sun.color,.48);
+  gateSun.target.position.set(-85,7,-64);
+  gateSun.position.copy(sun.position).sub(sun.target.position).add(gateSun.target.position);
+  gateSun.castShadow=true;gateSun.shadow.mapSize.set(1024,1024);
+  Object.assign(gateSun.shadow.camera,{left:-15,right:15,top:15,bottom:-15,near:155,far:245});
+  gateSun.shadow.normalBias=.014;gateSun.shadow.bias=-.00012;
+  scene.add(gateSun,gateSun.target);
+  // Land and architecture are static. The animated water does not cast shadows.
+  for(const light of [sun,gateSun]){light.shadow.autoUpdate=false;light.shadow.needsUpdate=true;}
   const water=makeWater(scene,sun);
   let transition=null,active='gate',last=0,waterTime=0;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');

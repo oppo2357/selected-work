@@ -96,13 +96,17 @@ def column_texture(seed, h, w, meters, offset):
     # Thin discontinuous fissures follow a wandering timber grain below the paint.
     checks = np.exp(-(np.sin(tau * (swirl * 24 + .45 * brush)) / .13) ** 2)
     checks *= np.clip((noise(u, v, 40, 23, seed+6) - .04) * 2, 0, 1)
-    mottling = macro*3.2 + brush*2.7 + fiber*3.1 + fine*1.9 - checks*20
+    mottling = macro*5.2 + brush*3.8 + fiber*4.2 + fine*2.3 - checks*24
     surface = color_field((205+offset*12, 68+offset*4, 35), mottling)
     tide = (1.52 + noise(u, v, 13, 8, seed+7)*.24 + noise(u, v, 32, 20, seed+8)*.16
             + noise(u, v, 121, 90, seed+9)*.16)
-    damp = np.clip((tide + .53 - vertical)/.42, 0, 1)
-    surface = blend(surface, color_field((155, 57, 36), mottling*1.7), damp*.85)
-    intertidal = np.clip((tide - vertical)*5+.5, 0, 1)
+    # The web water sits at 1.75 m. Keep a broken splash band visible above it.
+    splash = 2.39 + .24 * noise(u, v, 18, 7, seed+14) + .11 * brush
+    damp = np.clip((splash - vertical)/.64, 0, 1)
+    damp = damp * damp * (3 - 2 * damp)
+    surface = blend(surface, color_field((127, 52, 34), mottling*1.45), damp*.76)
+    tide += .22
+    intertidal = np.clip((tide - vertical)*4+.39, 0, 1)
     flecks = (noise(u, v, 24, 46, seed+10) * 13 + noise(u, v, 54, 112, seed+11) * 17
               + noise(u, v, 128, 251, seed+12) * 24)
     rock = color_field((92, 87, 65), flecks + macro*9+fine*6)
@@ -124,8 +128,9 @@ def timber_texture(h, w):
     y, x = np.mgrid[:h, :w].astype(float)
     u, v = x/w, y/h
     warp = v + .022*noise(u, v, 5, 8, 171)
-    grain = noise(u, warp, 4, 66, 172)*4.6 + noise(u, warp, 10, 163, 173)*2.4
-    return color_field((206, 68, 34), grain + noise(u, v, 8, 12, 174)*3)
+    grain = noise(u, warp, 4, 66, 172)*7 + noise(u, warp, 10, 163, 173)*3.3
+    brush = noise(u, v, 8, 12, 174)*5.2
+    return color_field((206, 68, 34), grain + brush)
 
 
 def roof_texture(h, w):
