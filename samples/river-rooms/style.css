@@ -37,7 +37,7 @@ padding:16px 4px;border-top:1px solid var(--line);color:var(--ink)}
 .door small{font:normal .75rem/1.55 Arial,sans-serif;color:#526052}
 .door strong{font-size:1.18rem}
 .door:hover,.walk:hover,.cast summary:hover{background:#eee9d8}
-.switch{display:inline-flex;border:1px solid #657467;margin:0 0 1rem}
+.switch{display:inline-flex;border:1px solid #657467;margin:1.2rem 0 0}
 .switch a{min-width:76px;text-align:center;padding:11px 15px;font-weight:600;text-decoration:none}
 .switch [aria-current=page]{background:var(--ink);color:#fff9df}
 .walk,.back{display:block;padding:12px 0;font-size:.95rem}
