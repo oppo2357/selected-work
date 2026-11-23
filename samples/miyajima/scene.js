@@ -12,6 +12,18 @@ const views={
   shrine:{target:[51,5.6,61],offset:[-33,5,-46],text:'The Takabutai dance stage faces the Great Torii. Raised walkways lead around the tidal inlet to the worship halls.'},
   pagoda:{target:[154.4,26.0,-52.7],offset:[21,3,-43],text:'Five tiers of cypress-bark eaves rise above the hill beside Senjōkaku. The study shows the tower without restoration scaffolding.'}
 };
+async function loadGate(){
+  const loader=new GLTFLoader();
+  try{
+    const {MeshoptDecoder}=await import('./addons/meshopt_decoder.module.js');
+    if(MeshoptDecoder.supported){
+      return await loader.setMeshoptDecoder(MeshoptDecoder).loadAsync('gate-meshopt.glb');
+    }
+  }catch{
+    // The standard GLB remains available if the optimized path cannot load.
+  }
+  return loader.loadAsync('gate.glb');
+}
 async function start(){
   const renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.outputColorSpace=T.SRGBColorSpace;
@@ -26,7 +38,7 @@ async function start(){
   const load=async(path,type)=>{const r=await fetch(path);if(!r.ok)throw Error(path+' '+r.status);return r[type]();};
   const loader=new T.TextureLoader();
   const [close,far,layout,gate,textures]=await Promise.all([load('elevation.bin','arrayBuffer'),load('regional-elevation.bin','arrayBuffer'),
-    load('inlet.json','json'),new GLTFLoader().loadAsync('gate.glb'),
+    load('inlet.json','json'),loadGate(),
     Promise.all(['inlet-ortho','mountain-ortho','canopy-5','canopy-26','canopy-67','bark-courses','deck-boards','granite'].map(async(n,i)=>{
       const map=await loader.loadAsync(n+'.webp');map.colorSpace=T.SRGBColorSpace;map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
       if(i>=5){map.wrapS=map.wrapT=T.RepeatWrapping;}
