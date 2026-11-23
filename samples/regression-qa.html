@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Fixed-scope regression testing for web workflows and developer tools, with a public example of an accepted QA report.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="regression-qa.css">
+  <title>Regression QA · oppo2357</title>
+</head>
+<body>
+  <div class="page qa-page">
+    <header>
+      <a class="brand" href="../index.html"><i aria-hidden="true"></i>oppo2357</a>
+      <a class="source" href="https://github.com/oppo2357">GitHub profile</a>
+    </header>
+    <main>
+      <section class="qa-intro" aria-labelledby="qa-title">
+        <h1 id="qa-title">Regression QA for releases</h1>
+        <p>Check a critical web workflow or developer tool before release. Get a result for each agreed check and a record of what happened when an issue appeared.</p>
+      </section>
+      <section class="qa-evidence" aria-labelledby="qa-evidence-title">
+        <div>
+          <h2 id="qa-evidence-title">An accepted Wirth finding</h2>
+          <p>Wirth reported a generic Python test as missing. Pytest ran both cases successfully. Changing only the type parameter declaration made both tools pass, isolating the difference.</p>
+        </div>
+        <div class="qa-results">
+          <dl>
+            <div><dt>Wirth validator</dt><dd>Test reported missing</dd></div>
+            <div><dt>Pytest</dt><dd>2 cases passed</dd></div>
+            <div><dt>Control</dt><dd>Both tools passed</dd></div>
+          </dl>
+          <nav class="sample-links" aria-label="Finding evidence">
+            <a href="https://github.com/chalkbadger/wirth/issues/29#issuecomment-6999146504">Read the report</a>
+            <a href="https://github.com/chalkbadger/wirth/issues/29#issuecomment-7009953470">See the maintainer’s ruling</a>
+          </nav>
+        </div>
+      </section>
+      <section class="qa-scope" aria-labelledby="qa-scope-title">
+        <h2 id="qa-scope-title">Fixed-scope review</h2>
+        <p>One workflow is an agreed path in one test environment, such as changing a reservation and checking the updated confirmation. The handoff includes a checklist, steps and evidence for issues observed, plus one retest after fixes.</p>
+        <dl class="qa-prices">
+          <div><dt>One workflow</dt><dd>US$75</dd></div>
+          <div><dt>Up to three workflows</dt><dd>US$175</dd></div>
+        </dl>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

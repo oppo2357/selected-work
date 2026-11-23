@@ -1,0 +1,38 @@
+.qa-page { max-width: 1120px; }
+
+.qa-page a:focus-visible {
+  outline: 3px solid #4a5634;
+  outline-offset: 4px;
+}
+
+.qa-intro { padding: clamp(38px, 8vw, 88px) 0 36px; }
+.qa-intro h1 { max-width: 12ch; font-size: clamp(49px, 8vw, 92px); }
+.qa-page p { max-width: 57ch; line-height: 1.6; }
+.qa-intro p { margin-top: 20px; font-size: clamp(17px, 2vw, 20px); }
+
+.qa-evidence {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 24px clamp(28px, 6vw, 70px);
+  padding: 32px 0;
+  border-block: 1px solid var(--rule);
+}
+.qa-page h2 { margin-bottom: 12px; font-size: 23px; line-height: 1.15; }
+.qa-page dl { margin: 0; }
+.qa-results dl { border-top: 1px solid var(--rule); }
+.qa-results dl div, .qa-prices div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 3px 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.qa-page dd { margin: 0; color: #454f31; font-weight: 650; }
+.qa-results nav { margin-top: 12px; }
+.qa-scope { padding: 32px 0 56px; }
+.qa-page .qa-prices { max-width: 48ch; margin-top: 18px; }
+
+@media (max-width: 650px) {
+  .qa-evidence { grid-template-columns: 1fr; }
+}
