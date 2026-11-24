@@ -30,8 +30,10 @@
 }
 .qa-page dd { margin: 0; color: #454f31; font-weight: 650; }
 .qa-results nav { margin-top: 12px; }
-.qa-scope { padding: 32px 0 56px; }
+.qa-scope { padding: 32px 0; border-bottom: 1px solid var(--rule); }
 .qa-page .qa-prices { max-width: 48ch; margin-top: 18px; }
+.qa-start { padding: 32px 0 56px; }
+.qa-start nav { margin-top: 14px; }
 
 @media (max-width: 650px) {
   .qa-evidence { grid-template-columns: 1fr; }
